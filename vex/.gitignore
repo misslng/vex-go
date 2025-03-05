@@ -1,0 +1,11 @@
+*.o
+*.a
+*.so
+*.lib
+*.dll
+*.exe
+vex
+
+auxprogs/genoffsets
+auxprogs/genoffsets.dSYM
+pub/libvex_guest_offsets.h
