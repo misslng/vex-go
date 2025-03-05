@@ -5,6 +5,6 @@ import (
 )
 
 func TestNewVexControl(t *testing.T) {
-	NewVexControl()
+	VexInit()
 
 }

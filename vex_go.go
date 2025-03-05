@@ -64,8 +64,7 @@ var (
 	vexControl         C.VexControl
 )
 
-// NewVexControl creates a new VexControl with default settings
-func NewVexControl() {
+func VexInit() {
 	if !initialized {
 		C.LibVEX_default_VexControl(&vexControl)
 		C.LibVEX_default_VexArchInfo(&vexArchInfo)
