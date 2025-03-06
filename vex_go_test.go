@@ -6,5 +6,4 @@ import (
 
 func TestNewVexControl(t *testing.T) {
 	VexInit()
-
 }
