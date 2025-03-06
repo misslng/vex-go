@@ -100,6 +100,127 @@ static void *dispatch(void) {
 	return NULL;
 }
 
+
+//----------------------------------------------------------------------
+// Initializes VEX
+// It must be called before using VEX for translation to Valgrind IR
+//----------------------------------------------------------------------
+int vex_init() {
+	static int initialized = 0;
+	pyvex_debug("Initializing VEX.\n");
+
+	if (initialized) {
+		pyvex_debug("VEX already initialized.\n");
+		return 1;
+	}
+	initialized = 1;
+
+	// Initialize VEX
+	LibVEX_default_VexControl(&vc);
+	LibVEX_default_VexArchInfo(&vai_host);
+	LibVEX_default_VexAbiInfo(&vbi);
+
+	vc.iropt_verbosity              = 0;
+	vc.iropt_level                  = 0;    // No optimization by default
+	//vc.iropt_precise_memory_exns    = False;
+	vc.iropt_unroll_thresh          = 0;
+	vc.guest_max_insns              = 1;    // By default, we vex 1 instruction at a time
+	vc.guest_chase_thresh           = 0;
+	vc.arm64_allow_reordered_writeback = 0;
+	vc.x86_optimize_callpop_idiom = 0;
+	vc.strict_block_end = 0;
+	vc.special_instruction_support = 0;
+
+	pyvex_debug("Calling LibVEX_Init()....\n");
+	if (setjmp(jumpout) == 0) {
+        // the 0 is the debug level
+        LibVEX_Init(&failure_exit, &log_bytes, 0, &vc);
+        pyvex_debug("LibVEX_Init() done....\n");
+    } else {
+        pyvex_debug("LibVEX_Init() failed catastrophically...\n");
+        return 0;
+    }
+
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	vai_host.endness = VexEndnessLE;
+#else
+	vai_host.endness = VexEndnessBE;
+#endif
+
+	// various settings to make stuff work
+	// ... former is set to 'unspecified', but gets set in vex_inst for archs which care
+	// ... the latter two are for dealing with gs and fs in VEX
+	vbi.guest_stack_redzone_size = 0;
+	vbi.guest_amd64_assume_fs_is_const = True;
+	vbi.guest_amd64_assume_gs_is_const = True;
+
+	//------------------------------------
+	// options for instruction translation
+
+	//
+	// Architecture info
+	//
+	vta.arch_guest          = VexArch_INVALID; // to be assigned later
+#if __amd64__ || _WIN64
+	vta.arch_host = VexArchAMD64;
+#elif __i386__ || _WIN32
+	vta.arch_host = VexArchX86;
+#elif __arm__
+	vta.arch_host = VexArchARM;
+	vai_host.hwcaps = 7;
+#elif __aarch64__
+	vta.arch_host = VexArchARM64;
+#elif __s390x__
+	vta.arch_host = VexArchS390X;
+	vai_host.hwcaps = VEX_HWCAPS_S390X_LDISP;
+#elif defined(__powerpc__) && defined(__NetBSD__)
+#  if defined(__LONG_WIDTH__) && (__LONG_WIDTH__ == 32)
+	vta.arch_host = VexArchPPC32;
+#  endif
+#elif defined(__powerpc__)
+        vta.arch_host = VexArchPPC64;
+#elif defined(__riscv)
+#  if defined(__riscv_xlen) && (__riscv_xlen == 64)
+	vta.arch_host = VexArchRISCV64;
+#  endif
+#else
+#error "Unsupported host arch"
+#endif
+
+	vta.archinfo_host = vai_host;
+
+	//
+	// The actual stuff to vex
+	//
+	vta.guest_bytes         = NULL;             // Set in vex_insts
+	vta.guest_bytes_addr    = 0;                // Set in vex_insts
+
+	//
+	// callbacks
+	//
+	vta.callback_opaque     = NULL;             // Used by chase_into_ok, but never actually called
+	vta.chase_into_ok       = chase_into_ok;    // Always returns false
+	vta.preamble_function   = NULL;
+	vta.instrument1         = NULL;
+	vta.instrument2         = NULL;
+	vta.finaltidy	    	= NULL;
+	vta.needs_self_check	= needs_self_check;
+
+	vta.disp_cp_chain_me_to_slowEP = (void *)dispatch; // Not used
+	vta.disp_cp_chain_me_to_fastEP = (void *)dispatch; // Not used
+	vta.disp_cp_xindir = (void *)dispatch; // Not used
+	vta.disp_cp_xassisted = (void *)dispatch; // Not used
+
+	vta.guest_extents       = &vge;
+	vta.host_bytes          = NULL;           // Buffer for storing the output binary
+	vta.host_bytes_size     = 0;
+	vta.host_bytes_used     = NULL;
+	// doesn't exist? vta.do_self_check       = False;
+	vta.traceflags          = 0;                // Debug verbosity
+	//vta.traceflags          = -1;                // Debug verbosity
+    return 1;
+}
+
 // Prepare the VexArchInfo struct
 static void vex_prepare_vai(VexArch arch, VexArchInfo *vai) {
 	switch (arch) {
