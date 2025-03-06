@@ -16,7 +16,7 @@ endif()
 
 # 添加包含目录
 include_directories(pub priv)
-
+add_definitions(-DVEXMULTIARCH)
 # 生成 libvex_guest_offsets.h
 add_executable(genoffsets auxprogs/genoffsets.c)
 add_custom_command(

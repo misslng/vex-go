@@ -21,7 +21,7 @@ target_include_directories(pyvex PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ../vex/pub
 )
-
+add_definitions(-DVEXMULTIARCH)
 # 链接 libvex.a
 target_link_libraries(pyvex PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/libvex.a
