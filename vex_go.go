@@ -38,7 +38,7 @@ func VexLift(v VexArch, mc []byte, insAddr int64) *C.VEXLiftResult {
 	return r
 }
 
-func getStmtAt(stmts **C.IRStmt, idx int, maxIdx int) *IRStmt {
+func GetStmtAt(stmts **C.IRStmt, idx int, maxIdx int) *IRStmt {
 	if idx < 0 || idx >= maxIdx {
 		return nil
 	}
