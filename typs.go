@@ -104,7 +104,7 @@ const (
 
 type IRConst struct {
 	Tag   IRConstTag
-	Value interface{}
+	Value unsafe.Pointer
 }
 
 type IRJumpKind uint32
