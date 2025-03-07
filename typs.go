@@ -86,6 +86,27 @@ const (
 	ItyV256           // 256位 SIMD
 )
 
+type IRConstTag uint32
+
+const (
+	IcoU1 IRConstTag = iota
+	IcoU8
+	IcoU16
+	IcoU32
+	IcoU64
+	IcoF32
+	IcoF32i
+	IcoF64
+	IcoF64i
+	IcoV128
+	IcoV256
+)
+
+type IRConst struct {
+	Tag   IRConstTag
+	Value unsafe.Pointer
+}
+
 type IRJumpKind uint32
 
 // IROp 表示VEX IR的操作码类型
@@ -398,7 +419,7 @@ type MBE struct {
 // Exit 表示条件退出
 type Exit struct {
 	Guard  *IRExpr      /* 条件表达式 */
-	Dst    *C.IRConst   /* 跳转目标（仅常量）*/
+	Dst    *IRConst     /* 跳转目标（仅常量）*/
 	Jk     C.IRJumpKind /* 跳转类型 */
 	OffsIP C.int        /* IP的状态偏移 */
 }
@@ -458,7 +479,7 @@ type Load struct {
 
 // Const 表示常量表达式
 type Const struct {
-	Con *C.IRConst /* 常量本身 */
+	Con *IRConst /* 常量本身 */
 }
 
 // CCall 表示调用纯C函数（无副作用）
