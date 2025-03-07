@@ -86,6 +86,42 @@ const (
 	ItyV256           // 256位 SIMD
 )
 
+type IRJumpKind uint32
+
+const (
+	IjkInvalid      IRJumpKind = 0x1A00
+	IjkBoring       IRJumpKind = 0x1A01 // 普通跳转，只是到下一个位置
+	IjkCall         IRJumpKind = 0x1A02 // 函数调用
+	IjkRet          IRJumpKind = 0x1A03 // 函数返回
+	IjkClientReq    IRJumpKind = 0x1A04 // 执行客户端请求后再继续
+	IjkYield        IRJumpKind = 0x1A05 // 客户端让出线程调度
+	IjkEmWarn       IRJumpKind = 0x1A06 // 报告模拟警告后继续
+	IjkEmFail       IRJumpKind = 0x1A07 // 模拟关键错误，放弃执行
+	IjkNoDecode     IRJumpKind = 0x1A08 // 当前指令无法解码
+	IjkMapFail      IRJumpKind = 0x1A09 // VEX提供的地址转换失败
+	IjkInvalICache  IRJumpKind = 0x1A0A // 使区域[CMSTART, +CMLEN)的指令缓存无效
+	IjkFlushDCache  IRJumpKind = 0x1A0B // 刷新区域[CMSTART, +CMLEN)的数据缓存
+	IjkNoRedir      IRJumpKind = 0x1A0C // 跳转到未重定向的客户地址
+	IjkSigILL       IRJumpKind = 0x1A0D // 当前指令产生SIGILL
+	IjkSigTRAP      IRJumpKind = 0x1A0E // 当前指令产生SIGTRAP
+	IjkSigSEGV      IRJumpKind = 0x1A0F // 当前指令产生SIGSEGV
+	IjkSigBUS       IRJumpKind = 0x1A10 // 当前指令产生SIGBUS
+	IjkSigFPE       IRJumpKind = 0x1A11 // 当前指令产生通用SIGFPE
+	IjkSigFPEIntDiv IRJumpKind = 0x1A12 // 当前指令产生SIGFPE-IntDiv
+	IjkSigFPEIntOvf IRJumpKind = 0x1A13 // 当前指令产生SIGFPE-IntOvf
+	IjkPrivileged   IRJumpKind = 0x1A14 // 当前指令应根据权限级别失败
+	// 系统调用相关跳转类型
+	IjkSysSyscall  IRJumpKind = 0x1A15 // amd64/x86 'syscall', ppc 'sc', arm 'svc #0'
+	IjkSysInt      IRJumpKind = 0x1A16 // amd64/x86 'int *'
+	IjkSysInt32    IRJumpKind = 0x1A17 // amd64/x86 'int $0x20'
+	IjkSysInt128   IRJumpKind = 0x1A18 // amd64/x86 'int $0x80'
+	IjkSysInt129   IRJumpKind = 0x1A19 // amd64/x86 'int $0x81'
+	IjkSysInt130   IRJumpKind = 0x1A1A // amd64/x86 'int $0x82'
+	IjkSysInt145   IRJumpKind = 0x1A1B // amd64/x86 'int $0x91'
+	IjkSysInt210   IRJumpKind = 0x1A1C // amd64/x86 'int $0xD2'
+	IjkSysSysenter IRJumpKind = 0x1A1D // x86 'sysenter'
+)
+
 const (
 	VexArchInvalid VexArch = C.VexArch_INVALID
 	VexArchX86     VexArch = C.VexArchX86
@@ -547,8 +583,8 @@ type IRSb struct {
 	Stmts     **C.IRStmt
 	StmtsSize C.Int
 	StmtsUsed C.Int
-	Next      *C.IRExpr
-	JumpKind  C.IRJumpKind
+	Next      *IRExpr
+	JumpKind  IRJumpKind
 	OffsIP    C.Int
 }
 
