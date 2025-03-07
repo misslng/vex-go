@@ -29,7 +29,7 @@ func VexInit() bool {
 
 func VexLift(v VexArch, mc []byte, insAddr uint64, en VexEndness) *IRSb {
 	var vai C.VexArchInfo
-	vai.endness = en
+	vai.endness = C.VexEndness(en)
 
 	cData := (*C.uchar)(unsafe.Pointer(&mc[0]))
 	r := C.vex_lift(C.VexArch(v), vai, cData, C.ulonglong(insAddr), C.uint(99), C.uint(4),
