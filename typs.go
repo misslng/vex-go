@@ -88,6 +88,86 @@ const (
 
 type IRJumpKind uint32
 
+// IROp 表示VEX IR的操作码类型
+type IROp uint32
+
+const (
+	// 基本操作码从0x1400开始
+	IopINVALID IROp = 0x1400
+
+	// 算术操作 - 加法
+	IopAdd8  IROp = 0x1400 + 1
+	IopAdd16 IROp = 0x1400 + 2
+	IopAdd32 IROp = 0x1400 + 3
+	IopAdd64 IROp = 0x1400 + 4
+
+	// 算术操作 - 减法
+	IopSub8  IROp = 0x1400 + 5
+	IopSub16 IROp = 0x1400 + 6
+	IopSub32 IROp = 0x1400 + 7
+	IopSub64 IROp = 0x1400 + 8
+
+	// 算术操作 - 乘法（无符号）
+	IopMul8  IROp = 0x1400 + 9
+	IopMul16 IROp = 0x1400 + 10
+	IopMul32 IROp = 0x1400 + 11
+	IopMul64 IROp = 0x1400 + 12
+
+	// 位操作 - 或运算
+	IopOr8  IROp = 0x1400 + 13
+	IopOr16 IROp = 0x1400 + 14
+	IopOr32 IROp = 0x1400 + 15
+	IopOr64 IROp = 0x1400 + 16
+
+	// 位操作 - 与运算
+	IopAnd8  IROp = 0x1400 + 17
+	IopAnd16 IROp = 0x1400 + 18
+	IopAnd32 IROp = 0x1400 + 19
+	IopAnd64 IROp = 0x1400 + 20
+
+	// 位操作 - 异或运算
+	IopXor8  IROp = 0x1400 + 21
+	IopXor16 IROp = 0x1400 + 22
+	IopXor32 IROp = 0x1400 + 23
+	IopXor64 IROp = 0x1400 + 24
+
+	// 位操作 - 左移
+	IopShl8  IROp = 0x1400 + 25
+	IopShl16 IROp = 0x1400 + 26
+	IopShl32 IROp = 0x1400 + 27
+	IopShl64 IROp = 0x1400 + 28
+
+	// 位操作 - 右移（逻辑）
+	IopShr8  IROp = 0x1400 + 29
+	IopShr16 IROp = 0x1400 + 30
+	IopShr32 IROp = 0x1400 + 31
+	IopShr64 IROp = 0x1400 + 32
+
+	// 位操作 - 右移（算术）
+	IopSar8  IROp = 0x1400 + 33
+	IopSar16 IROp = 0x1400 + 34
+	IopSar32 IROp = 0x1400 + 35
+	IopSar64 IROp = 0x1400 + 36
+
+	// 整数比较 - 等于
+	IopCmpEQ8  IROp = 0x1400 + 37
+	IopCmpEQ16 IROp = 0x1400 + 38
+	IopCmpEQ32 IROp = 0x1400 + 39
+	IopCmpEQ64 IROp = 0x1400 + 40
+
+	// 整数比较 - 不等于
+	IopCmpNE8  IROp = 0x1400 + 41
+	IopCmpNE16 IROp = 0x1400 + 42
+	IopCmpNE32 IROp = 0x1400 + 43
+	IopCmpNE64 IROp = 0x1400 + 44
+
+	// 一元操作 - 非运算
+	IopNot8  IROp = 0x1400 + 45
+	IopNot16 IROp = 0x1400 + 46
+	IopNot32 IROp = 0x1400 + 47
+	IopNot64 IROp = 0x1400 + 48
+)
+
 // ARM64RegisterOffsets 包含ARM64寄存器名称到偏移值的映射
 var ARM64RegisterOffsets = map[string]int{
 	// 64位通用寄存器 X0-X30
@@ -358,7 +438,7 @@ type Triop struct {
 
 // Binop 表示二元操作
 type Binop struct {
-	Op   C.IROp  /* 操作码 */
+	Op   IROp    /* 操作码 */
 	Arg1 *IRExpr /* 操作数1 */
 	Arg2 *IRExpr /* 操作数2 */
 }
