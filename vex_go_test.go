@@ -1,6 +1,7 @@
 package vex_go
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -10,12 +11,12 @@ func TestVexInit(t *testing.T) {
 	liftR := VexLift(VexArchARM64, mc, 0x1000)
 	for i := 0; i < int(liftR.StmtsUsed); i++ {
 		stmt := liftR.GetStmt(i)
-		switch stmt.tag {
-		case Ist_WrTmp:
+		switch stmt.Tag {
+		case IstWrTmp:
 			wrTmp := stmt.AsWrTmp()
-			switch wrTmp.Data.tag {
-			case Iex_Get:
-
+			switch wrTmp.Data.Tag {
+			case IexGet:
+				fmt.Println(wrTmp.Data.AsGet())
 			}
 		}
 	}
