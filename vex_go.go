@@ -27,7 +27,7 @@ func VexInit() bool {
 	return false
 }
 
-func VexLift(v VexArch, mc []byte, insAddr int64) *IRSb {
+func VexLift(v VexArch, mc []byte, insAddr uint64) *IRSb {
 	var vai C.VexArchInfo
 	vai.endness = C.VexEndnessLE // 小端
 

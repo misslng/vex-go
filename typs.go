@@ -579,9 +579,20 @@ func (i *IRExpr) AsITE() *ITE {
 }
 
 type IRTypeEnv struct {
-	Types     *IRType
-	TypesSize C.Int
-	TypesUsed C.Int
+	Types     unsafe.Pointer // 指向IRType数组的指针
+	TypesSize C.Int          // 数组的大小
+	TypesUsed C.Int          // 实际使用的类型数量
+}
+
+// GetType 根据索引获取IRType
+func (e *IRTypeEnv) GetType(idx int) IRType {
+	if idx < 0 || idx >= int(e.TypesUsed) {
+		// 索引超出范围
+		return ItyINVALID
+	}
+	// 获取指定索引的IRType
+	typesArray := (*[1 << 30]IRType)(e.Types)
+	return typesArray[idx]
 }
 
 type IRSb struct {
