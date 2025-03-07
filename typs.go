@@ -89,7 +89,7 @@ const (
 type IRConstTag uint32
 
 const (
-	IcoU1 IRConstTag = iota
+	IcoU1 IRConstTag = 0x1300 + iota
 	IcoU8
 	IcoU16
 	IcoU32
