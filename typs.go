@@ -2,6 +2,7 @@ package vex_go
 
 /*
 #cgo CFLAGS: -I${SRCDIR}/vex/pub -I${SRCDIR}/pyvex_c
+#cgo LDFLAGS: -L${SRCDIR} -lpyvex
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
