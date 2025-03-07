@@ -46,6 +46,7 @@ const (
 
 // IRExprTag 表示 VEX IR 表达式的类型
 type IRExprTag uint32
+type IRTemp uint32
 
 const (
 	IexBinder IRExprTag = 0x1900 + iota // 用于 VEX 内部模式匹配的绑定器
@@ -106,6 +107,93 @@ const (
 	VexEndnessBE      VexEndness = C.VexEndnessBE
 )
 
+// ARM64 register offsets in VexGuestARM64State
+const (
+	// General purpose registers
+	ARM64X0  = 16  // offset for X0
+	ARM64X1  = 24  // X0 + 8
+	ARM64X2  = 32  // X1 + 8
+	ARM64X3  = 40  // X2 + 8
+	ARM64X4  = 48  // X3 + 8
+	ARM64X5  = 56  // X4 + 8
+	ARM64X6  = 64  // X5 + 8
+	ARM64X7  = 72  // X6 + 8
+	ARM64X8  = 80  // X7 + 8
+	ARM64X9  = 88  // X8 + 8
+	ARM64X10 = 96  // X9 + 8
+	ARM64X11 = 104 // X10 + 8
+	ARM64X12 = 112 // X11 + 8
+	ARM64X13 = 120 // X12 + 8
+	ARM64X14 = 128 // X13 + 8
+	ARM64X15 = 136 // X14 + 8
+	ARM64X16 = 144 // X15 + 8
+	ARM64X17 = 152 // X16 + 8
+	ARM64X18 = 160 // X17 + 8
+	ARM64X19 = 168 // X18 + 8
+	ARM64X20 = 176 // X19 + 8
+	ARM64X21 = 184 // X20 + 8
+	ARM64X22 = 192 // X21 + 8
+	ARM64X23 = 200 // X22 + 8
+	ARM64X24 = 208 // X23 + 8
+	ARM64X25 = 216 // X24 + 8
+	ARM64X26 = 224 // X25 + 8
+	ARM64X27 = 232 // X26 + 8
+	ARM64X28 = 240 // X27 + 8
+	ARM64X29 = 248 // X28 + 8 (Frame Pointer)
+	ARM64X30 = 256 // X29 + 8 (Link Register)
+	ARM64SP  = 264 // X30 + 8 (Stack Pointer)
+	ARM64PC  = 272 // SP + 8 (Program Counter)
+
+	// Condition flags related
+	ARM64CCOp   = 280 // PC + 8
+	ARM64CCDep1 = 288 // CC_OP + 8
+	ARM64CCDep2 = 296 // CC_DEP1 + 8
+	ARM64CCNDep = 304 // CC_DEP2 + 8
+
+	// Thread register
+	ARM64TpidrEl0 = 312 // CC_NDEP + 8
+
+	// SIMD/FP registers (Q0-Q31, 128-bit each)
+	ARM64Q0  = 320 // TPIDR_EL0 + 8
+	ARM64Q1  = 336 // Q0 + 16
+	ARM64Q2  = 352 // Q1 + 16
+	ARM64Q3  = 368 // Q2 + 16
+	ARM64Q4  = 384 // Q3 + 16
+	ARM64Q5  = 400 // Q4 + 16
+	ARM64Q6  = 416 // Q5 + 16
+	ARM64Q7  = 432 // Q6 + 16
+	ARM64Q8  = 448 // Q7 + 16
+	ARM64Q9  = 464 // Q8 + 16
+	ARM64Q10 = 480 // Q9 + 16
+	ARM64Q11 = 496 // Q10 + 16
+	ARM64Q12 = 512 // Q11 + 16
+	ARM64Q13 = 528 // Q12 + 16
+	ARM64Q14 = 544 // Q13 + 16
+	ARM64Q15 = 560 // Q14 + 16
+	ARM64Q16 = 576 // Q15 + 16
+	ARM64Q17 = 592 // Q16 + 16
+	ARM64Q18 = 608 // Q17 + 16
+	ARM64Q19 = 624 // Q18 + 16
+	ARM64Q20 = 640 // Q19 + 16
+	ARM64Q21 = 656 // Q20 + 16
+	ARM64Q22 = 672 // Q21 + 16
+	ARM64Q23 = 688 // Q22 + 16
+	ARM64Q24 = 704 // Q23 + 16
+	ARM64Q25 = 720 // Q24 + 16
+	ARM64Q26 = 736 // Q25 + 16
+	ARM64Q27 = 752 // Q26 + 16
+	ARM64Q28 = 768 // Q27 + 16
+	ARM64Q29 = 784 // Q28 + 16
+	ARM64Q30 = 800 // Q29 + 16
+	ARM64Q31 = 816 // Q30 + 16
+
+	// FPSR QC flag
+	ARM64QCFlag = 832 // Q31 + 16
+
+	// Other system registers
+	ARM64FPCR = 848 // QCFLAG + 16
+)
+
 // NoOp 表示空操作
 type NoOp struct {
 	Dummy C.uint
@@ -127,8 +215,8 @@ type AbiHint struct {
 
 // Put 表示写入固定偏移的寄存器
 type Put struct {
-	Offset C.int     /* 状态偏移量 */
-	Data   *C.IRExpr /* 要写入的值 */
+	Offset C.int   /* 状态偏移量 */
+	Data   *IRExpr /* 要写入的值 */
 }
 
 // PutI 表示写入非固定偏移的寄存器
@@ -138,8 +226,8 @@ type PutI struct {
 
 // WrTmp 表示临时变量赋值
 type WrTmp struct {
-	Tmp  C.IRTemp /* 临时变量（赋值左值）*/
-	Data *IRExpr  /* 表达式（赋值右值）*/
+	Tmp  IRTemp  /* 临时变量（赋值左值）*/
+	Data *IRExpr /* 表达式（赋值右值）*/
 }
 
 // Store 表示内存存储
@@ -167,7 +255,7 @@ type CAS struct {
 // LLSC 表示 Load-Linked/Store-Conditional 操作
 type LLSC struct {
 	End       C.IREndness /* 字节序 */
-	Result    C.IRTemp    /* 结果临时变量 */
+	Result    IRTemp      /* 结果临时变量 */
 	Addr      *C.IRExpr   /* 地址 */
 	StoreData *C.IRExpr   /* NULL表示LL，非NULL表示SC */
 }
@@ -210,7 +298,7 @@ type GetI struct {
 
 // RdTmp 表示读取临时变量
 type RdTmp struct {
-	Tmp C.IRTemp /* 临时变量编号 */
+	Tmp IRTemp /* 临时变量编号 */
 }
 
 // Qop 表示四元操作
