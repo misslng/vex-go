@@ -578,8 +578,14 @@ func (i *IRExpr) AsITE() *ITE {
 	return (*ITE)(unsafe.Pointer(&i.Iex))
 }
 
+type IRTypeEnv struct {
+	Types     *IRType
+	TypesSize C.Int
+	TypesUsed C.Int
+}
+
 type IRSb struct {
-	TyEnv     *C.IRTypeEnv
+	TyEnv     *IRTypeEnv
 	Stmts     **C.IRStmt
 	StmtsSize C.Int
 	StmtsUsed C.Int
