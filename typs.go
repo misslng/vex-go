@@ -244,9 +244,9 @@ type IMark struct {
 
 // AbiHint 表示 ABI 提示
 type AbiHint struct {
-	Base *C.IRExpr /* 未定义块的起始地址 */
-	Len  C.int     /* 未定义块的长度 */
-	Nia  *C.IRExpr /* 下一条指令的地址 */
+	Base *IRExpr /* 未定义块的起始地址 */
+	Len  C.int   /* 未定义块的长度 */
+	Nia  *IRExpr /* 下一条指令的地址 */
 }
 
 // Put 表示写入固定偏移的寄存器
@@ -269,8 +269,8 @@ type WrTmp struct {
 // Store 表示内存存储
 type Store struct {
 	End  C.IREndness /* 字节序 */
-	Addr *C.IRExpr   /* 存储地址 */
-	Data *C.IRExpr   /* 要写入的值 */
+	Addr *IRExpr     /* 存储地址 */
+	Data *IRExpr     /* 要写入的值 */
 }
 
 // StoreG 表示有条件的存储
@@ -292,8 +292,8 @@ type CAS struct {
 type LLSC struct {
 	End       C.IREndness /* 字节序 */
 	Result    IRTemp      /* 结果临时变量 */
-	Addr      *C.IRExpr   /* 地址 */
-	StoreData *C.IRExpr   /* NULL表示LL，非NULL表示SC */
+	Addr      *IRExpr     /* 地址 */
+	StoreData *IRExpr     /* NULL表示LL，非NULL表示SC */
 }
 
 // Dirty 表示调用有副作用的C函数
@@ -308,7 +308,7 @@ type MBE struct {
 
 // Exit 表示条件退出
 type Exit struct {
-	Guard  *C.IRExpr    /* 条件表达式 */
+	Guard  *IRExpr      /* 条件表达式 */
 	Dst    *C.IRConst   /* 跳转目标（仅常量）*/
 	Jk     C.IRJumpKind /* 跳转类型 */
 	OffsIP C.int        /* IP的状态偏移 */
@@ -328,7 +328,7 @@ type Get struct {
 // GetI 表示从非固定偏移读取寄存器（用于循环索引）
 type GetI struct {
 	Descr *C.IRRegArray /* 作为循环数组处理的状态部分 */
-	Ix    *C.IRExpr     /* 数组索引的变量部分 */
+	Ix    *IRExpr       /* 数组索引的变量部分 */
 	Bias  C.int         /* 数组索引的常量偏移部分 */
 }
 
@@ -349,22 +349,22 @@ type Triop struct {
 
 // Binop 表示二元操作
 type Binop struct {
-	Op   C.IROp    /* 操作码 */
-	Arg1 *C.IRExpr /* 操作数1 */
-	Arg2 *C.IRExpr /* 操作数2 */
+	Op   C.IROp  /* 操作码 */
+	Arg1 *IRExpr /* 操作数1 */
+	Arg2 *IRExpr /* 操作数2 */
 }
 
 // Unop 表示一元操作
 type Unop struct {
-	Op  C.IROp    /* 操作码 */
-	Arg *C.IRExpr /* 操作数 */
+	Op  C.IROp  /* 操作码 */
+	Arg *IRExpr /* 操作数 */
 }
 
 // Load 表示从内存加载（普通加载，非 Load-Linked）
 type Load struct {
 	End  C.IREndness /* 字节序 */
 	Ty   C.IRType    /* 加载值的类型 */
-	Addr *C.IRExpr   /* 加载地址 */
+	Addr *IRExpr     /* 加载地址 */
 }
 
 // Const 表示常量表达式
@@ -376,14 +376,14 @@ type Const struct {
 type CCall struct {
 	Cee   *C.IRCallee /* 要调用的函数 */
 	RetTy C.IRType    /* 返回值类型 */
-	Args  **C.IRExpr  /* 参数表达式向量 */
+	Args  **IRExpr    /* 参数表达式向量 */
 }
 
 // ITE 表示三元 if-then-else 操作（严格求值）
 type ITE struct {
-	Cond    *C.IRExpr /* 条件 */
-	IfTrue  *C.IRExpr /* 真值表达式 */
-	IfFalse *C.IRExpr /* 假值表达式 */
+	Cond    *IRExpr /* 条件 */
+	IfTrue  *IRExpr /* 真值表达式 */
+	IfFalse *IRExpr /* 假值表达式 */
 }
 
 type IRStmt struct {
