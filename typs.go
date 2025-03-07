@@ -16,7 +16,6 @@ package vex_go
 */
 import "C"
 import (
-	"fmt"
 	"unsafe"
 )
 
@@ -27,9 +26,6 @@ type VexEndness uint32
 type VexArch uint32
 
 type IRStmtTag uint32
-
-type VEXLiftResult struct {
-}
 
 const (
 	Ist_NoOp    IRStmtTag = 0x1E00 // 7680
@@ -47,42 +43,6 @@ const (
 	Ist_MBE     IRStmtTag = 0x1E0C // 7692
 	Ist_Exit    IRStmtTag = 0x1E0D // 7693
 )
-
-// String returns the string representation of the IRStmtTag
-func (t IRStmtTag) String() string {
-	switch t {
-	case Ist_NoOp:
-		return "Ist_NoOp"
-	case Ist_IMark:
-		return "Ist_IMark"
-	case Ist_AbiHint:
-		return "Ist_AbiHint"
-	case Ist_Put:
-		return "Ist_Put"
-	case Ist_PutI:
-		return "Ist_PutI"
-	case Ist_WrTmp:
-		return "Ist_WrTmp"
-	case Ist_Store:
-		return "Ist_Store"
-	case Ist_LoadG:
-		return "Ist_LoadG"
-	case Ist_StoreG:
-		return "Ist_StoreG"
-	case Ist_CAS:
-		return "Ist_CAS"
-	case Ist_LLSC:
-		return "Ist_LLSC"
-	case Ist_Dirty:
-		return "Ist_Dirty"
-	case Ist_MBE:
-		return "Ist_MBE"
-	case Ist_Exit:
-		return "Ist_Exit"
-	default:
-		return fmt.Sprintf("Ist_Unknown(%d)", uint32(t))
-	}
-}
 
 // IRExprTag 表示 VEX IR 表达式的类型
 type IRExprTag uint32
@@ -104,42 +64,6 @@ const (
 	Iex_GSPTR                            // 获取状态指针
 )
 
-// String 返回 IRExprTag 的字符串表示
-func (t IRExprTag) String() string {
-	switch t {
-	case Iex_Binder:
-		return "Iex_Binder"
-	case Iex_Get:
-		return "Iex_Get"
-	case Iex_GetI:
-		return "Iex_GetI"
-	case Iex_RdTmp:
-		return "Iex_RdTmp"
-	case Iex_Qop:
-		return "Iex_Qop"
-	case Iex_Triop:
-		return "Iex_Triop"
-	case Iex_Binop:
-		return "Iex_Binop"
-	case Iex_Unop:
-		return "Iex_Unop"
-	case Iex_Load:
-		return "Iex_Load"
-	case Iex_Const:
-		return "Iex_Const"
-	case Iex_ITE:
-		return "Iex_ITE"
-	case Iex_CCall:
-		return "Iex_CCall"
-	case Iex_VECRET:
-		return "Iex_VECRET"
-	case Iex_GSPTR:
-		return "Iex_GSPTR"
-	default:
-		return fmt.Sprintf("Iex_Unknown(%d)", uint32(t))
-	}
-}
-
 type IRType uint32
 
 const (
@@ -160,45 +84,6 @@ const (
 	Ity_V128           // 128位 SIMD
 	Ity_V256           // 256位 SIMD
 )
-
-func (t IRType) String() string {
-	switch t {
-	case Ity_INVALID:
-		return "Ity_INVALID"
-	case Ity_I1:
-		return "I1"
-	case Ity_I8:
-		return "I8"
-	case Ity_I16:
-		return "I16"
-	case Ity_I32:
-		return "I32"
-	case Ity_I64:
-		return "I64"
-	case Ity_I128:
-		return "I128"
-	case Ity_F16:
-		return "F16"
-	case Ity_F32:
-		return "F32"
-	case Ity_F64:
-		return "F64"
-	case Ity_D32:
-		return "D32"
-	case Ity_D64:
-		return "D64"
-	case Ity_D128:
-		return "D128"
-	case Ity_F128:
-		return "F128"
-	case Ity_V128:
-		return "V128"
-	case Ity_V256:
-		return "V256"
-	default:
-		return fmt.Sprintf("Ity_Unknown(%d)", uint32(t))
-	}
-}
 
 const (
 	VexArchInvalid VexArch = C.VexArch_INVALID
@@ -228,9 +113,9 @@ type NoOp struct {
 
 // IMark 表示指令标记
 type IMark struct {
-	addr  C.Addr  /* 指令地址 */
-	len   C.uint  /* 指令长度 */
-	delta C.uchar /* PC编码偏移 */
+	Addr  C.Addr  /* 指令地址 */
+	Len   C.uint  /* 指令长度 */
+	Delta C.uchar /* PC编码偏移 */
 }
 
 // AbiHint 表示 ABI 提示
@@ -253,8 +138,8 @@ type PutI struct {
 
 // WrTmp 表示临时变量赋值
 type WrTmp struct {
-	tmp  C.IRTemp /* 临时变量（赋值左值）*/
-	data *IRExpr  /* 表达式（赋值右值）*/
+	Tmp  C.IRTemp /* 临时变量（赋值左值）*/
+	Data *IRExpr  /* 表达式（赋值右值）*/
 }
 
 // Store 表示内存存储
@@ -312,8 +197,8 @@ type Binder struct {
 
 // Get 表示从固定偏移读取寄存器
 type Get struct {
-	offset C.int  /* 状态偏移量 */
-	ty     IRType /* 读取值的类型 */
+	Offset C.int  /* 状态偏移量 */
+	Ty     IRType /* 读取值的类型 */
 }
 
 // GetI 表示从非固定偏移读取寄存器（用于循环索引）
@@ -379,7 +264,7 @@ type ITE struct {
 
 type IRStmt struct {
 	tag IRStmtTag
-	Ist interface{}
+	Ist unsafe.Pointer
 }
 
 func (i *IRStmt) AsNoOp() *NoOp {
@@ -480,57 +365,9 @@ func (i *IRStmt) AsExit() *Exit {
 	return (*Exit)(unsafe.Pointer(&i.Ist))
 }
 
-func (i *IRStmt) Pp() string {
-	switch i.tag {
-	case Ist_NoOp:
-		return "IR-NoOp"
-	case Ist_IMark:
-		mark := i.AsIMark()
-		return fmt.Sprintf("IR-IMark(0x%x, %d, %d)", mark.addr, mark.len, mark.delta)
-	case Ist_AbiHint:
-		hint := i.AsAbiHint()
-		return fmt.Sprintf("IR-AbiHint(%v, %d, %v)", hint.base, hint.len, hint.nia)
-	case Ist_Put:
-		put := i.AsPut()
-		return fmt.Sprintf("IR-Put(%d) = %v", put.offset, put.data)
-	case Ist_PutI:
-		puti := i.AsPutI()
-		return fmt.Sprintf("IR-PutI(%v)", puti.details)
-	case Ist_WrTmp:
-		tmp := i.AsWrTmp()
-		return fmt.Sprintf("IR-WrTmp(t%d) = %v", tmp.tmp, tmp.data)
-	case Ist_Store:
-		store := i.AsStore()
-		return fmt.Sprintf("IR-Store(%v) = %v", store.addr, store.data)
-	case Ist_LoadG:
-		loadg := i.AsLoadG()
-		return fmt.Sprintf("IR-LoadG(%v)", loadg.details)
-	case Ist_StoreG:
-		storeg := i.AsStoreG()
-		return fmt.Sprintf("IR-StoreG(%v)", storeg.details)
-	case Ist_CAS:
-		cas := i.AsCAS()
-		return fmt.Sprintf("IR-CAS(%v)", cas.details)
-	case Ist_LLSC:
-		llsc := i.AsLLSC()
-		return fmt.Sprintf("IR-LLSC(t%d, %v) = %v", llsc.result, llsc.addr, llsc.storedata)
-	case Ist_Dirty:
-		dirty := i.AsDirty()
-		return fmt.Sprintf("IR-Dirty(%v)", dirty.details)
-	case Ist_MBE:
-		mbe := i.AsMBE()
-		return fmt.Sprintf("IR-MBE(%v)", mbe.event)
-	case Ist_Exit:
-		exit := i.AsExit()
-		return fmt.Sprintf("IR-Exit(%v -> 0x%x)", exit.guard, exit.dst)
-	default:
-		return fmt.Sprintf("IR-Unknown(%d)", i.tag)
-	}
-}
-
 type IRExpr struct {
 	tag IRExprTag
-	Iex interface{}
+	Iex unsafe.Pointer
 }
 
 func (i *IRExpr) AsBinder() *Binder {
@@ -617,45 +454,19 @@ func (i *IRExpr) AsITE() *ITE {
 	return (*ITE)(unsafe.Pointer(&i.Iex))
 }
 
-func (i *IRExpr) Pp() string {
-	switch i.tag {
-	case Iex_Binder:
-		binder := i.AsBinder()
-		return fmt.Sprintf("BINDER(%d)", binder.binder)
-	case Iex_Get:
-		get := i.AsGet()
-		return fmt.Sprintf("GET:%v(%d)", get.ty, get.offset)
-	case Iex_GetI:
-		geti := i.AsGetI()
-		return fmt.Sprintf("GETI%v[%v,%d]", geti.descr, geti.ix, geti.bias)
-	case Iex_RdTmp:
-		tmp := i.AsRdTmp()
-		return fmt.Sprintf("t%d", tmp.tmp)
-	case Iex_Qop:
-		qop := i.AsQop()
-		return fmt.Sprintf("QOP(%v)", qop.details)
-	case Iex_Triop:
-		triop := i.AsTriop()
-		return fmt.Sprintf("TRIOP(%v)", triop.details)
-	case Iex_Binop:
-		binop := i.AsBinop()
-		return fmt.Sprintf("%v(%v,%v)", binop.op, binop.arg1, binop.arg2)
-	case Iex_Unop:
-		unop := i.AsUnop()
-		return fmt.Sprintf("%v(%v)", unop.op, unop.arg)
-	case Iex_Load:
-		load := i.AsLoad()
-		return fmt.Sprintf("LD%v:%v(%v)", load.end, load.ty, load.addr)
-	case Iex_Const:
-		con := i.AsConst()
-		return fmt.Sprintf("%v", con.con)
-	case Iex_CCall:
-		ccall := i.AsCCall()
-		return fmt.Sprintf("%v(%v):%v", ccall.cee, ccall.args, ccall.retty)
-	case Iex_ITE:
-		ite := i.AsITE()
-		return fmt.Sprintf("ITE(%v,%v,%v)", ite.cond, ite.iftrue, ite.iffalse)
-	default:
-		return fmt.Sprintf("Iex_Unknown(%d)", i.tag)
+type IRSb struct {
+	tyEnv     *C.IRTypeEnv
+	stmts     **C.IRStmt
+	StmtsSize C.Int
+	StmtsUsed C.Int
+	next      *C.IRExpr
+	jumpKind  C.IRJumpKind
+	OffsIP    C.Int
+}
+
+func (isb *IRSb) GetStmt(index int) *IRStmt {
+	if index < 0 || index >= int(isb.StmtsUsed) {
+		return nil
 	}
+	return (*IRStmt)(unsafe.Pointer(*(**C.IRStmt)(unsafe.Pointer(uintptr(unsafe.Pointer(isb.stmts)) + uintptr(index)*unsafe.Sizeof(uintptr(0))))))
 }

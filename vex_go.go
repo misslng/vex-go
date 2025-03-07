@@ -26,23 +26,15 @@ func VexInit() bool {
 	return false
 }
 
-func VexLift(v VexArch, mc []byte, insAddr int64) *C.VEXLiftResult {
+func VexLift(v VexArch, mc []byte, insAddr int64) *IRSb {
 	var vai C.VexArchInfo
 	vai.endness = C.VexEndnessLE // 小端
 
 	cData := (*C.uchar)(unsafe.Pointer(&mc[0]))
 	r := C.vex_lift(C.VexArch(v), vai, cData, C.ulonglong(insAddr), C.uint(99), C.uint(4),
 		C.int(1), C.int(0), C.int(0), C.int(1), C.int(0), C.int(1), C.int(0), C.VexRegUpdUnwindregsAtMemAccess, C.uint(0))
-
-	return r
-}
-
-func GetStmtAt(stmts **C.IRStmt, idx int, maxIdx int) *IRStmt {
-	if idx < 0 || idx >= maxIdx {
+	if r == nil {
 		return nil
 	}
-
-	// 将 IRStmt** 转换为切片
-	stmtsSlice := (*[1 << 30]*C.IRStmt)(unsafe.Pointer(stmts))[:maxIdx:maxIdx]
-	return (*IRStmt)(unsafe.Pointer(stmtsSlice[idx]))
+	return (*IRSb)(unsafe.Pointer(r.irsb))
 }
