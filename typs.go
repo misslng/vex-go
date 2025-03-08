@@ -721,3 +721,18 @@ func (isb *IRSb) GetStmt(index int) *IRStmt {
 	}
 	return (*IRStmt)(unsafe.Pointer(*(**C.IRStmt)(unsafe.Pointer(uintptr(unsafe.Pointer(isb.Stmts)) + uintptr(index)*unsafe.Sizeof(uintptr(0))))))
 }
+
+func GetIRTypeSize(irt IRType) int {
+	switch irt {
+	case ItyI8:
+		return 1
+	case ItyI16:
+		return 2
+	case ItyI32:
+		return 4
+	case ItyI64:
+		return 8
+	default:
+		panic("unknown IRType size")
+	}
+}
