@@ -473,7 +473,7 @@ type Unop struct {
 // Load 表示从内存加载（普通加载，非 Load-Linked）
 type Load struct {
 	End  C.IREndness /* 字节序 */
-	Ty   C.IRType    /* 加载值的类型 */
+	Ty   IRType      /* 加载值的类型 */
 	Addr *IRExpr     /* 加载地址 */
 }
 
@@ -485,7 +485,7 @@ type Const struct {
 // CCall 表示调用纯C函数（无副作用）
 type CCall struct {
 	Cee   *C.IRCallee /* 要调用的函数 */
-	RetTy C.IRType    /* 返回值类型 */
+	RetTy IRType      /* 返回值类型 */
 	Args  **IRExpr    /* 参数表达式向量 */
 }
 
