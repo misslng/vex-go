@@ -595,6 +595,104 @@ const (
 	IopQAdd16Sx4 IROp = 0x1400 + 317
 	IopQAdd32Sx2 IROp = 0x1400 + 318
 	IopQAdd64Sx1 IROp = 0x1400 + 319
+
+	// 成对操作 - 对向量内每对相邻元素执行操作
+	IopPwAdd8x8  IROp = 0x1400 + 320 // 成对加法8x8
+	IopPwAdd16x4 IROp = 0x1400 + 321 // 成对加法16x4
+	IopPwAdd32x2 IROp = 0x1400 + 322 // 成对加法32x2
+
+	// 有符号/无符号成对最大值
+	IopPwMax8Sx8  IROp = 0x1400 + 323 // 成对有符号最大值8x8
+	IopPwMax16Sx4 IROp = 0x1400 + 324 // 成对有符号最大值16x4
+	IopPwMax32Sx2 IROp = 0x1400 + 325 // 成对有符号最大值32x2
+	IopPwMax8Ux8  IROp = 0x1400 + 326 // 成对无符号最大值8x8
+	IopPwMax16Ux4 IROp = 0x1400 + 327 // 成对无符号最大值16x4
+	IopPwMax32Ux2 IROp = 0x1400 + 328 // 成对无符号最大值32x2
+
+	// 有符号/无符号成对最小值
+	IopPwMin8Sx8  IROp = 0x1400 + 329 // 成对有符号最小值8x8
+	IopPwMin16Sx4 IROp = 0x1400 + 330 // 成对有符号最小值16x4
+	IopPwMin32Sx2 IROp = 0x1400 + 331 // 成对有符号最小值32x2
+	IopPwMin8Ux8  IROp = 0x1400 + 332 // 成对无符号最小值8x8
+	IopPwMin16Ux4 IROp = 0x1400 + 333 // 成对无符号最小值16x4
+	IopPwMin32Ux2 IROp = 0x1400 + 334 // 成对无符号最小值32x2
+
+	// 长度扩展变体是一元的。结果向量包含比操作数少两倍的元素，但它们宽两倍。
+	// 例如:
+	//    IopPwAddL16Ux4([a,b,c,d]) = [a+b,c+d]
+	//    其中a+b和c+d是无符号32位值。
+	IopPwAddL8Ux8  IROp = 0x1400 + 335 // 成对加法无符号长度扩展8x8
+	IopPwAddL16Ux4 IROp = 0x1400 + 336 // 成对加法无符号长度扩展16x4
+	IopPwAddL32Ux2 IROp = 0x1400 + 337 // 成对加法无符号长度扩展32x2
+	IopPwAddL8Sx8  IROp = 0x1400 + 338 // 成对加法有符号长度扩展8x8
+	IopPwAddL16Sx4 IROp = 0x1400 + 339 // 成对加法有符号长度扩展16x4
+	IopPwAddL32Sx2 IROp = 0x1400 + 340 // 成对加法有符号长度扩展32x2
+
+	// 减法(普通/无符号饱和/有符号饱和)
+	IopSub8x8    IROp = 0x1400 + 341 // 减法8x8
+	IopSub16x4   IROp = 0x1400 + 342 // 减法16x4
+	IopSub32x2   IROp = 0x1400 + 343 // 减法32x2
+	IopQSub8Ux8  IROp = 0x1400 + 344 // 无符号饱和减法8x8
+	IopQSub16Ux4 IROp = 0x1400 + 345 // 无符号饱和减法16x4
+	IopQSub32Ux2 IROp = 0x1400 + 346 // 无符号饱和减法32x2
+	IopQSub64Ux1 IROp = 0x1400 + 347 // 无符号饱和减法64x1
+	IopQSub8Sx8  IROp = 0x1400 + 348 // 有符号饱和减法8x8
+	IopQSub16Sx4 IROp = 0x1400 + 349 // 有符号饱和减法16x4
+	IopQSub32Sx2 IROp = 0x1400 + 350 // 有符号饱和减法32x2
+	IopQSub64Sx1 IROp = 0x1400 + 351 // 有符号饱和减法64x1
+
+	// 绝对值
+	IopAbs8x8  IROp = 0x1400 + 352 // 绝对值8x8
+	IopAbs16x4 IROp = 0x1400 + 353 // 绝对值16x4
+	IopAbs32x2 IROp = 0x1400 + 354 // 绝对值32x2
+
+	// 乘法(普通/有符号或无符号高半部分/多项式)
+	IopMul8x8     IROp = 0x1400 + 355 // 乘法8x8
+	IopMul16x4    IROp = 0x1400 + 356 // 乘法16x4
+	IopMul32x2    IROp = 0x1400 + 357 // 乘法32x2
+	IopMul32Fx2   IROp = 0x1400 + 358 // 浮点乘法32x2
+	IopMulHi16Ux4 IROp = 0x1400 + 359 // 无符号高半部分乘法16x4
+	IopMulHi16Sx4 IROp = 0x1400 + 360 // 有符号高半部分乘法16x4
+
+	// 多项式乘法将参数视为{0,1}上多项式的系数
+	IopPolynomialMul8x8 IROp = 0x1400 + 361 // 多项式乘法8x8
+
+	// 向量饱和双倍乘法返回高半部分和向量饱和舍入双倍乘法返回高半部分
+	// 这些IROp将两个向量中的对应元素相乘，结果加倍，并将最终结果的最高有效半部分放在目标向量中。
+	// 结果被截断或舍入。如果任何结果溢出，它们将被饱和处理。
+	IopQDMulHi16Sx4  IROp = 0x1400 + 362 // 饱和双倍乘法返回高半部分16x4
+	IopQDMulHi32Sx2  IROp = 0x1400 + 363 // 饱和双倍乘法返回高半部分32x2
+	IopQRDMulHi16Sx4 IROp = 0x1400 + 364 // 饱和舍入双倍乘法返回高半部分16x4
+	IopQRDMulHi32Sx2 IROp = 0x1400 + 365 // 饱和舍入双倍乘法返回高半部分32x2
+
+	// 平均值：注意：(arg1 + arg2 + 1) >>u 1
+	IopAvg8Ux8  IROp = 0x1400 + 366 // 无符号平均值8x8
+	IopAvg16Ux4 IROp = 0x1400 + 367 // 无符号平均值16x4
+
+	// 最大值/最小值
+	IopMax8Sx8  IROp = 0x1400 + 368 // 有符号最大值8x8
+	IopMax16Sx4 IROp = 0x1400 + 369 // 有符号最大值16x4
+	IopMax32Sx2 IROp = 0x1400 + 370 // 有符号最大值32x2
+	IopMax8Ux8  IROp = 0x1400 + 371 // 无符号最大值8x8
+	IopMax16Ux4 IROp = 0x1400 + 372 // 无符号最大值16x4
+	IopMax32Ux2 IROp = 0x1400 + 373 // 无符号最大值32x2
+	IopMin8Sx8  IROp = 0x1400 + 374 // 有符号最小值8x8
+	IopMin16Sx4 IROp = 0x1400 + 375 // 有符号最小值16x4
+	IopMin32Sx2 IROp = 0x1400 + 376 // 有符号最小值32x2
+	IopMin8Ux8  IROp = 0x1400 + 377 // 无符号最小值8x8
+	IopMin16Ux4 IROp = 0x1400 + 378 // 无符号最小值16x4
+	IopMin32Ux2 IROp = 0x1400 + 379 // 无符号最小值32x2
+
+	// 比较
+	IopCmpEQ8x8   IROp = 0x1400 + 380 // 相等比较8x8
+	IopCmpEQ16x4  IROp = 0x1400 + 381 // 相等比较16x4
+	IopCmpEQ32x2  IROp = 0x1400 + 382 // 相等比较32x2
+	IopCmpGT8Ux8  IROp = 0x1400 + 383 // 无符号大于比较8x8
+	IopCmpGT16Ux4 IROp = 0x1400 + 384 // 无符号大于比较16x4
+	IopCmpGT32Ux2 IROp = 0x1400 + 385 // 无符号大于比较32x2
+	IopCmpGT8Sx8  IROp = 0x1400 + 386 // 有符号大于比较8x8
+	IopCmpGT16Sx4 IROp = 0x1400 + 387 // 有符号大于比较16x4
+	IopCmpGT32Sx2 IROp = 0x1400 + 388 // 有符号大于比较32x2
 )
 
 // ARM64RegisterOffsets 包含ARM64寄存器名称到偏移值的映射
