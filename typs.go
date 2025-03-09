@@ -372,6 +372,229 @@ const (
 	IopF32toI32S IROp = 0x1400 + 178 // IRRoundingMode(I32) x F32 -> signed I32
 	IopF32toI64S IROp = 0x1400 + 179 // IRRoundingMode(I32) x F32 -> signed I64
 	IopF32toI32U IROp = 0x1400 + 180 // IRRoundingMode(I32) x F32 -> unsigned I32
+	IopF32toI64U IROp = 0x1400 + 181 // IRRoundingMode(I32) x F32 -> unsigned I64
+
+	// 有符号整数到浮点数的转换
+	IopI32StoF32 IROp = 0x1400 + 182 // IRRoundingMode(I32) x signed I32 -> F32
+	IopI64StoF32 IROp = 0x1400 + 183 // IRRoundingMode(I32) x signed I64 -> F32
+
+	// 浮点格式之间的转换
+	IopF32toF64 IROp = 0x1400 + 184 // F32 -> F64
+	IopF64toF32 IROp = 0x1400 + 185 // IRRoundingMode(I32) x F64 -> F32
+
+	// 重新解释：将F64转为I64（保持相同的位模式），或反向操作
+	IopReinterpF64asI64 IROp = 0x1400 + 186 // F64 -> I64，保持位模式
+	IopReinterpI64asF64 IROp = 0x1400 + 187 // I64 -> F64，保持位模式
+	IopReinterpF32asI32 IROp = 0x1400 + 188 // F32 -> I32，保持位模式
+	IopReinterpI32asF32 IROp = 0x1400 + 189 // I32 -> F32，保持位模式
+
+	// 支持128位浮点数
+	IopF64HLtoF128 IROp = 0x1400 + 190 // (F128的高半部分,F128的低半部分) -> F128
+	IopF128HItoF64 IROp = 0x1400 + 191 // F128 -> F128的高半部分到F64寄存器
+	IopF128LOtoF64 IROp = 0x1400 + 192 // F128 -> F128的低半部分到F64寄存器
+
+	// 128位浮点算术运算
+	// :: IRRoundingMode(I32) x F128 x F128 -> F128
+	IopAddF128     IROp = 0x1400 + 193 // 加法
+	IopSubF128     IROp = 0x1400 + 194 // 减法
+	IopMulF128     IROp = 0x1400 + 195 // 乘法
+	IopDivF128     IROp = 0x1400 + 196 // 除法
+	IopMAddF128    IROp = 0x1400 + 197 // (A * B) + C
+	IopMSubF128    IROp = 0x1400 + 198 // (A * B) - C
+	IopNegMAddF128 IROp = 0x1400 + 199 // -((A * B) + C)
+	IopNegMSubF128 IROp = 0x1400 + 200 // -((A * B) - C)
+	IopNegF128     IROp = 0x1400 + 201 // 取负
+	IopAbsF128     IROp = 0x1400 + 202 // 绝对值
+
+	// :: IRRoundingMode(I32) x F128 -> F128
+	IopSqrtF128 IROp = 0x1400 + 203 // 平方根
+
+	// 整数到F128的转换
+	IopI32StoF128 IROp = 0x1400 + 204 // signed I32 -> F128
+	IopI64StoF128 IROp = 0x1400 + 205 // signed I64 -> F128
+	IopI32UtoF128 IROp = 0x1400 + 206 // unsigned I32 -> F128
+	IopI64UtoF128 IROp = 0x1400 + 207 // unsigned I64 -> F128
+	IopF32toF128  IROp = 0x1400 + 208 // F32 -> F128
+	IopF64toF128  IROp = 0x1400 + 209 // F64 -> F128
+
+	// F128到整数的转换
+	IopF128toI32S  IROp = 0x1400 + 210 // IRRoundingMode(I32) x F128 -> signed I32
+	IopF128toI64S  IROp = 0x1400 + 211 // IRRoundingMode(I32) x F128 -> signed I64
+	IopF128toI32U  IROp = 0x1400 + 212 // IRRoundingMode(I32) x F128 -> unsigned I32
+	IopF128toI64U  IROp = 0x1400 + 213 // IRRoundingMode(I32) x F128 -> unsigned I64
+	IopF128toI128S IROp = 0x1400 + 214 // IRRoundingMode(I32) x F128 -> signed I128
+	IopF128toF64   IROp = 0x1400 + 215 // IRRoundingMode(I32) x F128 -> F64
+	IopF128toF32   IROp = 0x1400 + 216 // IRRoundingMode(I32) x F128 -> F32
+	IopRndF128     IROp = 0x1400 + 217 // IRRoundingMode(I32) x F128 -> F128
+
+	// 截断到指定值，源和结果存储在F128寄存器中
+	IopTruncF128toI32S IROp = 0x1400 + 218 // truncate F128 -> I32
+	IopTruncF128toI32U IROp = 0x1400 + 219 // truncate F128 -> I32
+	IopTruncF128toI64U IROp = 0x1400 + 220 // truncate F128 -> I64
+	IopTruncF128toI64S IROp = 0x1400 + 221 // truncate F128 -> I64
+
+	// --- x86/amd64特定操作，非754标准要求 ---
+	// :: IRRoundingMode(I32) x F64 x F64 -> F64
+	IopAtanF64       IROp = 0x1400 + 222 // FPATAN, arctan(arg1/arg2)
+	IopYl2xF64       IROp = 0x1400 + 223 // FYL2X, arg1 * log2(arg2)
+	IopYl2xp1F64     IROp = 0x1400 + 224 // FYL2XP1, arg1 * log2(arg2+1.0)
+	IopPRemF64       IROp = 0x1400 + 225 // FPREM, 非IEEE余数(arg1/arg2)
+	IopPRemC3210F64  IROp = 0x1400 + 226 // FPREM结果的C3210标志位, :: I32
+	IopPRem1F64      IROp = 0x1400 + 227 // FPREM1, IEEE余数(arg1/arg2)
+	IopPRem1C3210F64 IROp = 0x1400 + 228 // FPREM1结果的C3210标志位, :: I32
+	IopScaleF64      IROp = 0x1400 + 229 // FSCALE, arg1 * (2^RoundTowardsZero(arg2))
+
+	// :: IRRoundingMode(I32) x F64 -> F64
+	IopSinF64         IROp = 0x1400 + 230 // FSIN
+	IopCosF64         IROp = 0x1400 + 231 // FCOS
+	IopTanF64         IROp = 0x1400 + 232 // FTAN
+	Iop2xm1F64        IROp = 0x1400 + 233 // (2^arg - 1.0)
+	IopRoundF128toInt IROp = 0x1400 + 234 // F128值舍入到最接近的整数值(仍为F128)
+	IopRoundF64toInt  IROp = 0x1400 + 235 // F64值舍入到最接近的整数值(仍为F64)
+	IopRoundF32toInt  IROp = 0x1400 + 236 // F32值舍入到最接近的整数值(仍为F32)
+
+	// --- guest s390特定操作，非754标准要求 ---
+	IopMAddF32 IROp = 0x1400 + 237 // (A * B) + C
+	IopMSubF32 IROp = 0x1400 + 238 // (A * B) - C
+
+	// --- guest ppc32/64特定操作，非754标准要求 ---
+	IopMAddF64 IROp = 0x1400 + 239 // (A * B) + C
+	IopMSubF64 IROp = 0x1400 + 240 // (A * B) - C
+
+	IopMAddF64r32 IROp = 0x1400 + 241 // (A * B) + C，结果先舍入到F32范围
+	IopMSubF64r32 IROp = 0x1400 + 242 // (A * B) - C，结果先舍入到F32范围
+
+	IopRSqrtEst5GoodF64      IROp = 0x1400 + 243 // 倒数平方根估计，5个有效位
+	IopRoundF64toF64_NEAREST IROp = 0x1400 + 244 // frin，舍入到最近
+	IopRoundF64toF64_NegINF  IROp = 0x1400 + 245 // frim，舍入到负无穷
+	IopRoundF64toF64_PosINF  IROp = 0x1400 + 246 // frip，舍入到正无穷
+	IopRoundF64toF64_ZERO    IROp = 0x1400 + 247 // friz，舍入到零
+
+	IopTruncF64asF32 IROp = 0x1400 + 248 // 按'fsts'执行F64->F32截断
+
+	IopRoundF64toF32 IROp = 0x1400 + 249 // 将F64舍入到最接近的F32值(仍为F64)
+
+	// --- guest arm64特定操作，非754标准要求 ---
+	IopRecpExpF64 IROp = 0x1400 + 250 // FRECPX d :: IRRoundingMode(I32) x F64 -> F64
+	IopRecpExpF32 IROp = 0x1400 + 251 // FRECPX s :: IRRoundingMode(I32) x F32 -> F32
+
+	// --------- 可能由IEEE 754-2008要求 ---------
+	IopMaxNumF64 IROp = 0x1400 + 252 // max, F64, 如果另一个是qNaN则返回数值操作数
+	IopMinNumF64 IROp = 0x1400 + 253 // min, F64, 同上
+	IopMaxNumF32 IROp = 0x1400 + 254 // max, F32, 同上
+	IopMinNumF32 IROp = 0x1400 + 255 // min, F32, 同上
+
+	// ------------------ 16位标量FP ------------------
+	IopF16toF64 IROp = 0x1400 + 256 // F16 -> F64
+	IopF64toF16 IROp = 0x1400 + 257 // IRRoundingMode(I32) x F64 -> F16
+
+	IopF16toF32 IROp = 0x1400 + 258 // F16 -> F32
+	IopF32toF16 IROp = 0x1400 + 259 // IRRoundingMode(I32) x F32 -> F16
+
+	// ------------------ 32位SIMD整数 ------------------
+	IopQAdd32S IROp = 0x1400 + 260
+	IopQSub32S IROp = 0x1400 + 261
+
+	IopAdd16x2   IROp = 0x1400 + 262
+	IopSub16x2   IROp = 0x1400 + 263
+	IopQAdd16Sx2 IROp = 0x1400 + 264
+	IopQAdd16Ux2 IROp = 0x1400 + 265
+	IopQSub16Sx2 IROp = 0x1400 + 266
+	IopQSub16Ux2 IROp = 0x1400 + 267
+
+	IopHAdd16Ux2 IROp = 0x1400 + 268
+	IopHAdd16Sx2 IROp = 0x1400 + 269
+	IopHSub16Ux2 IROp = 0x1400 + 270
+	IopHSub16Sx2 IROp = 0x1400 + 271
+
+	IopAdd8x4   IROp = 0x1400 + 272
+	IopSub8x4   IROp = 0x1400 + 273
+	IopQAdd8Sx4 IROp = 0x1400 + 274
+	IopQAdd8Ux4 IROp = 0x1400 + 275
+	IopQSub8Sx4 IROp = 0x1400 + 276
+	IopQSub8Ux4 IROp = 0x1400 + 277
+
+	// 8x4有符号/无符号半加/减。对每个通道，计算
+	// sx(argL) + sx(argR)的位8:1，
+	// 或zx(argL) - zx(argR)等
+	IopHAdd8Ux4 IROp = 0x1400 + 278
+	IopHAdd8Sx4 IROp = 0x1400 + 279
+	IopHSub8Ux4 IROp = 0x1400 + 280
+	IopHSub8Sx4 IROp = 0x1400 + 281
+
+	// 8x4无符号绝对差的和
+	IopSad8Ux4 IROp = 0x1400 + 282
+
+	// 其他(向量整数比较 != 0)
+	IopCmpNEZ16x2 IROp = 0x1400 + 283
+	IopCmpNEZ8x4  IROp = 0x1400 + 284
+
+	// ------------------ 64位SIMD浮点 --------------------
+
+	// 转换到/从整数
+	IopI32UtoFx2    IROp = 0x1400 + 285 // I32x4 -> F32x4
+	IopI32StoFx2    IROp = 0x1400 + 286 // I32x4 -> F32x4
+	IopFtoI32Ux2_RZ IROp = 0x1400 + 287 // F32x4 -> I32x4
+	IopFtoI32Sx2_RZ IROp = 0x1400 + 288 // F32x4 -> I32x4
+
+	// Fixed32格式是具有固定小数位数的浮点数。
+	// 小数位数作为I8类型的第二个参数传递。
+	IopF32ToFixed32Ux2_RZ IROp = 0x1400 + 289 // fp -> 定点
+	IopF32ToFixed32Sx2_RZ IROp = 0x1400 + 290 // fp -> 定点
+	IopFixed32UToF32x2_RN IROp = 0x1400 + 291 // 定点 -> fp
+	IopFixed32SToF32x2_RN IROp = 0x1400 + 292 // 定点 -> fp
+
+	// 二元操作
+	IopMax32Fx2 IROp = 0x1400 + 293
+	IopMin32Fx2 IROp = 0x1400 + 294
+
+	// 成对最小和最大值
+	IopPwMax32Fx2 IROp = 0x1400 + 295
+	IopPwMin32Fx2 IROp = 0x1400 + 296
+
+	// 注意：对于以下比较，arm前端假设参数中任一通道的nan返回该通道的零。
+	IopCmpEQ32Fx2 IROp = 0x1400 + 297
+	IopCmpGT32Fx2 IROp = 0x1400 + 298
+	IopCmpGE32Fx2 IROp = 0x1400 + 299
+
+	// 向量倒数估计在操作数向量的每个元素中找到近似倒数，
+	// 并将结果放在目标向量中。
+	IopRecipEst32Fx2 IROp = 0x1400 + 300
+
+	// 向量倒数步骤计算(2.0 - arg1 * arg2)。
+	// 注意，如果一个参数为零，另一个为任意符号的无穷大，操作结果为2.0。
+	IopRecipStep32Fx2 IROp = 0x1400 + 301
+
+	// 向量倒数平方根估计在操作数向量的每个元素中找到近似倒数平方根。
+	IopRSqrtEst32Fx2 IROp = 0x1400 + 302
+
+	// 向量倒数平方根步骤计算(3.0 - arg1 * arg2) / 2.0。
+	// 注意，如果一个参数为零，另一个为任意符号的无穷大，操作结果为1.5。
+	IopRSqrtStep32Fx2 IROp = 0x1400 + 303
+
+	// 一元操作
+	IopNeg32Fx2 IROp = 0x1400 + 304
+	IopAbs32Fx2 IROp = 0x1400 + 305
+
+	// ------------------ 64位SIMD整数 --------------------
+
+	// 其他(向量整数比较 != 0)
+	IopCmpNEZ8x8  IROp = 0x1400 + 306
+	IopCmpNEZ16x4 IROp = 0x1400 + 307
+	IopCmpNEZ32x2 IROp = 0x1400 + 308
+
+	// 加法(普通/无符号饱和/有符号饱和)
+	IopAdd8x8    IROp = 0x1400 + 309
+	IopAdd16x4   IROp = 0x1400 + 310
+	IopAdd32x2   IROp = 0x1400 + 311
+	IopQAdd8Ux8  IROp = 0x1400 + 312
+	IopQAdd16Ux4 IROp = 0x1400 + 313
+	IopQAdd32Ux2 IROp = 0x1400 + 314
+	IopQAdd64Ux1 IROp = 0x1400 + 315
+	IopQAdd8Sx8  IROp = 0x1400 + 316
+	IopQAdd16Sx4 IROp = 0x1400 + 317
+	IopQAdd32Sx2 IROp = 0x1400 + 318
+	IopQAdd64Sx1 IROp = 0x1400 + 319
 )
 
 // ARM64RegisterOffsets 包含ARM64寄存器名称到偏移值的映射
