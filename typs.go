@@ -16,6 +16,7 @@ package vex_go
 */
 import "C"
 import (
+	"fmt"
 	"unsafe"
 )
 
@@ -908,6 +909,8 @@ func (isb *IRSb) GetStmt(index int) *IRStmt {
 
 func GetIRTypeSize(irt IRType) int {
 	switch irt {
+	case ItyI1:
+		return 1 // 虽然只有1位，但通常以字节为单位
 	case ItyI8:
 		return 1
 	case ItyI16:
@@ -916,8 +919,28 @@ func GetIRTypeSize(irt IRType) int {
 		return 4
 	case ItyI64:
 		return 8
+	case ItyI128:
+		return 16
+	case ItyF16:
+		return 2
+	case ItyF32:
+		return 4
+	case ItyF64:
+		return 8
+	case ItyD32:
+		return 4
+	case ItyD64:
+		return 8
+	case ItyD128:
+		return 16
+	case ItyF128:
+		return 16
+	case ItyV128:
+		return 16
+	case ItyV256:
+		return 32
 	default:
-		panic("unknown IRType size")
+		panic(fmt.Sprintf("unknown IRType size for type: %v", irt))
 	}
 }
 
