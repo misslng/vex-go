@@ -466,7 +466,7 @@ type Binop struct {
 
 // Unop 表示一元操作
 type Unop struct {
-	Op  C.IROp  /* 操作码 */
+	Op  IROp    /* 操作码 */
 	Arg *IRExpr /* 操作数 */
 }
 
