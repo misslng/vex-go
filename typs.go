@@ -920,3 +920,28 @@ func GetIRTypeSize(irt IRType) int {
 		panic("unknown IRType size")
 	}
 }
+
+func GetIRConstTagSize(ict IRConstTag) int {
+	switch ict {
+	case IcoU1:
+		return 1 // 实际上只有 1 位，但分配为 1 字节
+	case IcoU8:
+		return 1
+	case IcoU16:
+		return 2
+	case IcoU32:
+		return 4
+	case IcoU64:
+		return 8
+	case IcoF32, IcoF32i:
+		return 4
+	case IcoF64, IcoF64i:
+		return 8
+	case IcoV128:
+		return 16
+	case IcoV256:
+		return 32
+	default:
+		panic("unknown IRConstTag size")
+	}
+}
