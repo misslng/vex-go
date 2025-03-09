@@ -724,6 +724,47 @@ const (
 	IopSal16x4 IROp = 0x1400 + 411 // 算术左移16x4
 	IopSal32x2 IROp = 0x1400 + 412 // 算术左移32x2
 	IopSal64x1 IROp = 0x1400 + 413 // 算术左移64x1
+
+	// 向量x标量 移位（移位量 :: Ity_I8）
+	IopShlN8x8  IROp = 0x1400 + 414 // 标量左移8x8
+	IopShlN16x4 IROp = 0x1400 + 415 // 标量左移16x4
+	IopShlN32x2 IROp = 0x1400 + 416 // 标量左移32x2
+	IopShrN8x8  IROp = 0x1400 + 417 // 标量逻辑右移8x8
+	IopShrN16x4 IROp = 0x1400 + 418 // 标量逻辑右移16x4
+	IopShrN32x2 IROp = 0x1400 + 419 // 标量逻辑右移32x2
+	IopSarN8x8  IROp = 0x1400 + 420 // 标量算术右移8x8
+	IopSarN16x4 IROp = 0x1400 + 421 // 标量算术右移16x4
+	IopSarN32x2 IROp = 0x1400 + 422 // 标量算术右移32x2
+
+	// 向量x向量 饱和移位
+	IopQShl8x8  IROp = 0x1400 + 423 // 饱和左移8x8
+	IopQShl16x4 IROp = 0x1400 + 424 // 饱和左移16x4
+	IopQShl32x2 IROp = 0x1400 + 425 // 饱和左移32x2
+	IopQShl64x1 IROp = 0x1400 + 426 // 饱和左移64x1
+	IopQSal8x8  IROp = 0x1400 + 427 // 饱和算术左移8x8
+	IopQSal16x4 IROp = 0x1400 + 428 // 饱和算术左移16x4
+	IopQSal32x2 IROp = 0x1400 + 429 // 饱和算术左移32x2
+	IopQSal64x1 IROp = 0x1400 + 430 // 饱和算术左移64x1
+
+	// 向量x整数 饱和移位
+	IopQShlNsatSU8x8  IROp = 0x1400 + 431 // 有符号到无符号饱和左移8x8
+	IopQShlNsatSU16x4 IROp = 0x1400 + 432 // 有符号到无符号饱和左移16x4
+	IopQShlNsatSU32x2 IROp = 0x1400 + 433 // 有符号到无符号饱和左移32x2
+	IopQShlNsatSU64x1 IROp = 0x1400 + 434 // 有符号到无符号饱和左移64x1
+	IopQShlNsatUU8x8  IROp = 0x1400 + 435 // 无符号到无符号饱和左移8x8
+	IopQShlNsatUU16x4 IROp = 0x1400 + 436 // 无符号到无符号饱和左移16x4
+	IopQShlNsatUU32x2 IROp = 0x1400 + 437 // 无符号到无符号饱和左移32x2
+	IopQShlNsatUU64x1 IROp = 0x1400 + 438 // 无符号到无符号饱和左移64x1
+	IopQShlNsatSS8x8  IROp = 0x1400 + 439 // 有符号到有符号饱和左移8x8
+	IopQShlNsatSS16x4 IROp = 0x1400 + 440 // 有符号到有符号饱和左移16x4
+	IopQShlNsatSS32x2 IROp = 0x1400 + 441 // 有符号到有符号饱和左移32x2
+	IopQShlNsatSS64x1 IROp = 0x1400 + 442 // 有符号到有符号饱和左移64x1
+
+	// 缩小（二元）
+	// -- 将2xI64缩小为1xI64，高半部分来自左参数
+	IopQNarrowBin16Sto8Ux8  IROp = 0x1400 + 443 // 有符号16位到无符号8位x8
+	IopQNarrowBin16Sto8Sx8  IROp = 0x1400 + 444 // 有符号16位到有符号8位x8
+	IopQNarrowBin32Sto16Sx4 IROp = 0x1400 + 445 // 有符号32位到有符号16位x4
 )
 
 // ARM64RegisterOffsets 包含ARM64寄存器名称到偏移值的映射
