@@ -114,657 +114,1068 @@ type IRJumpKind uint32
 type IROp uint32
 
 const (
-	// 基本操作码从0x1400开始
-	IopINVALID IROp = 0x1400
-
-	// 算术操作 - 加法
-	IopAdd8  IROp = 0x1400 + 1
-	IopAdd16 IROp = 0x1400 + 2
-	IopAdd32 IROp = 0x1400 + 3
-	IopAdd64 IROp = 0x1400 + 4
-
-	// 算术操作 - 减法
-	IopSub8  IROp = 0x1400 + 5
-	IopSub16 IROp = 0x1400 + 6
-	IopSub32 IROp = 0x1400 + 7
-	IopSub64 IROp = 0x1400 + 8
-
-	// 算术操作 - 乘法（无符号）
-	IopMul8  IROp = 0x1400 + 9
-	IopMul16 IROp = 0x1400 + 10
-	IopMul32 IROp = 0x1400 + 11
-	IopMul64 IROp = 0x1400 + 12
-
-	// 位操作 - 或运算
-	IopOr8  IROp = 0x1400 + 13
-	IopOr16 IROp = 0x1400 + 14
-	IopOr32 IROp = 0x1400 + 15
-	IopOr64 IROp = 0x1400 + 16
-
-	// 位操作 - 与运算
-	IopAnd8  IROp = 0x1400 + 17
-	IopAnd16 IROp = 0x1400 + 18
-	IopAnd32 IROp = 0x1400 + 19
-	IopAnd64 IROp = 0x1400 + 20
-
-	// 位操作 - 异或运算
-	IopXor8  IROp = 0x1400 + 21
-	IopXor16 IROp = 0x1400 + 22
-	IopXor32 IROp = 0x1400 + 23
-	IopXor64 IROp = 0x1400 + 24
-
-	// 位操作 - 左移
-	IopShl8  IROp = 0x1400 + 25
-	IopShl16 IROp = 0x1400 + 26
-	IopShl32 IROp = 0x1400 + 27
-	IopShl64 IROp = 0x1400 + 28
-
-	// 位操作 - 右移（逻辑）
-	IopShr8  IROp = 0x1400 + 29
-	IopShr16 IROp = 0x1400 + 30
-	IopShr32 IROp = 0x1400 + 31
-	IopShr64 IROp = 0x1400 + 32
-
-	// 位操作 - 右移（算术）
-	IopSar8  IROp = 0x1400 + 33
-	IopSar16 IROp = 0x1400 + 34
-	IopSar32 IROp = 0x1400 + 35
-	IopSar64 IROp = 0x1400 + 36
-
-	// 整数比较 - 等于
-	IopCmpEQ8  IROp = 0x1400 + 37
-	IopCmpEQ16 IROp = 0x1400 + 38
-	IopCmpEQ32 IROp = 0x1400 + 39
-	IopCmpEQ64 IROp = 0x1400 + 40
-
-	// 整数比较 - 不等于
-	IopCmpNE8  IROp = 0x1400 + 41
-	IopCmpNE16 IROp = 0x1400 + 42
-	IopCmpNE32 IROp = 0x1400 + 43
-	IopCmpNE64 IROp = 0x1400 + 44
-
-	// 一元操作 - 非运算
-	IopNot8  IROp = 0x1400 + 45
-	IopNot16 IROp = 0x1400 + 46
-	IopNot32 IROp = 0x1400 + 47
-	IopNot64 IROp = 0x1400 + 48
-
-	// CAS比较操作
-	IopCasCmpEQ8  IROp = 0x1400 + 49
-	IopCasCmpEQ16 IROp = 0x1400 + 50
-	IopCasCmpEQ32 IROp = 0x1400 + 51
-	IopCasCmpEQ64 IROp = 0x1400 + 52
-	IopCasCmpNE8  IROp = 0x1400 + 53
-	IopCasCmpNE16 IROp = 0x1400 + 54
-	IopCasCmpNE32 IROp = 0x1400 + 55
-	IopCasCmpNE64 IROp = 0x1400 + 56
-
-	// 需要昂贵的确定性跟踪的比较操作
-	IopExpCmpNE8  IROp = 0x1400 + 57
-	IopExpCmpNE16 IROp = 0x1400 + 58
-	IopExpCmpNE32 IROp = 0x1400 + 59
-	IopExpCmpNE64 IROp = 0x1400 + 60
-
-	// 扩展乘法（有符号和无符号）
-	IopMullS8  IROp = 0x1400 + 61
-	IopMullS16 IROp = 0x1400 + 62
-	IopMullS32 IROp = 0x1400 + 63
-	IopMullS64 IROp = 0x1400 + 64
-	IopMullU8  IROp = 0x1400 + 65
-	IopMullU16 IROp = 0x1400 + 66
-	IopMullU32 IROp = 0x1400 + 67
-	IopMullU64 IROp = 0x1400 + 68
-
-	// 整数特殊操作
-	IopClz64 IROp = 0x1400 + 69 // 计算前导零数
-	IopClz32 IROp = 0x1400 + 70
-	IopCtz64 IROp = 0x1400 + 71 // 计算尾随零数
-	IopCtz32 IROp = 0x1400 + 72
-
-	// 标准整数比较（有符号和无符号）
-	IopCmpLT32S IROp = 0x1400 + 73
-	IopCmpLT64S IROp = 0x1400 + 74
-	IopCmpLE32S IROp = 0x1400 + 75
-	IopCmpLE64S IROp = 0x1400 + 76
-	IopCmpLT32U IROp = 0x1400 + 77
-	IopCmpLT64U IROp = 0x1400 + 78
-	IopCmpLE32U IROp = 0x1400 + 79
-	IopCmpLE64U IROp = 0x1400 + 80
-
-	// Valgrind-Memcheck相关操作
-	IopCmpNEZ8   IROp = 0x1400 + 81
-	IopCmpNEZ16  IROp = 0x1400 + 82
-	IopCmpNEZ32  IROp = 0x1400 + 83
-	IopCmpNEZ64  IROp = 0x1400 + 84
-	IopCmpwNEZ32 IROp = 0x1400 + 85 // 全0 -> 全0; 其他 -> 全1
-	IopCmpwNEZ64 IROp = 0x1400 + 86
-	IopLeft8     IROp = 0x1400 + 87 // \x -> x | -x
-	IopLeft16    IROp = 0x1400 + 88
-	IopLeft32    IROp = 0x1400 + 89
-	IopLeft64    IROp = 0x1400 + 90
-	IopMax32U    IROp = 0x1400 + 91 // 无符号最大值
-
-	// PowerPC风格三路整数比较
-	// op(x,y) | x < y = 0x8, x > y = 0x4, x == y = 0x2
-	IopCmpORD32U IROp = 0x1400 + 92
-	IopCmpORD64U IROp = 0x1400 + 93
-	IopCmpORD32S IROp = 0x1400 + 94
-	IopCmpORD64S IROp = 0x1400 + 95
-
-	// 除法操作
-	IopDivU32  IROp = 0x1400 + 96  // I32,I32 -> I32 (简单除法，无模)
-	IopDivS32  IROp = 0x1400 + 97  // 同上，有符号
-	IopDivU64  IROp = 0x1400 + 98  // I64,I64 -> I64
-	IopDivS64  IROp = 0x1400 + 99  // 同上，有符号
-	IopDivU64E IROp = 0x1400 + 100 // 被除数是64位参数(高)与64个0(低)连接
-	IopDivS64E IROp = 0x1400 + 101 // 同上，有符号
-	IopDivU32E IROp = 0x1400 + 102 // 被除数是32位参数(高)与32个0(低)连接
-	IopDivS32E IROp = 0x1400 + 103 // 同上，有符号
-
-	// DivMod操作 - 同时返回除法和取模结果
-	IopDivModU64to32  IROp = 0x1400 + 104 // I64,I32 -> I64，其中低半是商，高半是余数
-	IopDivModS64to32  IROp = 0x1400 + 105 // 同上，有符号
-	IopDivModU128to64 IROp = 0x1400 + 106 // V128,I64 -> V128，其中低半是商，高半是余数
-	IopDivModS128to64 IROp = 0x1400 + 107 // 同上，有符号
-	IopDivModS64to64  IROp = 0x1400 + 108 // I64,I64 -> I128，其中低半是商，高半是余数
-
-	// 整数扩展转换（无符号）
-	Iop8Uto16  IROp = 0x1400 + 109
-	Iop8Uto32  IROp = 0x1400 + 110
-	Iop8Uto64  IROp = 0x1400 + 111
-	Iop16Uto32 IROp = 0x1400 + 112
-	Iop16Uto64 IROp = 0x1400 + 113
-	Iop32Uto64 IROp = 0x1400 + 114
-
-	// 整数扩展转换（有符号）
-	Iop8Sto16  IROp = 0x1400 + 115
-	Iop8Sto32  IROp = 0x1400 + 116
-	Iop8Sto64  IROp = 0x1400 + 117
-	Iop16Sto32 IROp = 0x1400 + 118
-	Iop16Sto64 IROp = 0x1400 + 119
-	Iop32Sto64 IROp = 0x1400 + 120
-
-	// 整数缩小转换
-	Iop64to8  IROp = 0x1400 + 121
-	Iop32to8  IROp = 0x1400 + 122
-	Iop64to16 IROp = 0x1400 + 123
-
-	// 8 <-> 16 位转换
-	Iop16to8   IROp = 0x1400 + 124 // I16 -> I8, 低半部分
-	Iop16HIto8 IROp = 0x1400 + 125 // I16 -> I8, 高半部分
-	Iop8HLto16 IROp = 0x1400 + 126 // (I8,I8) -> I16
-
-	// 16 <-> 32 位转换
-	Iop32to16   IROp = 0x1400 + 127 // I32 -> I16, 低半部分
-	Iop32HIto16 IROp = 0x1400 + 128 // I32 -> I16, 高半部分
-	Iop16HLto32 IROp = 0x1400 + 129 // (I16,I16) -> I32
-
-	// 32 <-> 64 位转换
-	Iop64to32   IROp = 0x1400 + 130 // I64 -> I32, 低半部分
-	Iop64HIto32 IROp = 0x1400 + 131 // I64 -> I32, 高半部分
-	Iop32HLto64 IROp = 0x1400 + 132 // (I32,I32) -> I64
-
-	// 64 <-> 128 位转换
-	Iop128to64   IROp = 0x1400 + 133 // I128 -> I64, 低半部分
-	Iop128HIto64 IROp = 0x1400 + 134 // I128 -> I64, 高半部分
-	Iop64HLto128 IROp = 0x1400 + 135 // (I64,I64) -> I128
-
-	// 1位操作
-	IopNot1   IROp = 0x1400 + 136 // Ity_Bit -> Ity_Bit
-	Iop32to1  IROp = 0x1400 + 137 // Ity_I32 -> Ity_Bit, 仅选择bit[0]
-	Iop64to1  IROp = 0x1400 + 138 // Ity_I64 -> Ity_Bit, 仅选择bit[0]
-	Iop1Uto8  IROp = 0x1400 + 139 // Ity_Bit -> Ity_I8, 无符号扩展
-	Iop1Uto32 IROp = 0x1400 + 140 // Ity_Bit -> Ity_I32, 无符号扩展
-	Iop1Uto64 IROp = 0x1400 + 141 // Ity_Bit -> Ity_I64, 无符号扩展
-	Iop1Sto8  IROp = 0x1400 + 142 // Ity_Bit -> Ity_I8, 有符号扩展
-	Iop1Sto16 IROp = 0x1400 + 143 // Ity_Bit -> Ity_I16, 有符号扩展
-	Iop1Sto32 IROp = 0x1400 + 144 // Ity_Bit -> Ity_I32, 有符号扩展
-	Iop1Sto64 IROp = 0x1400 + 145 // Ity_Bit -> Ity_I64, 有符号扩展
-
-	// 浮点操作 - 尝试符合IEEE754标准
-	// 二进制操作，带舍入
-	// IRRoundingMode(I32) x F64 x F64 -> F64
-	IopAddF64 IROp = 0x1400 + 146
-	IopSubF64 IROp = 0x1400 + 147
-	IopMulF64 IROp = 0x1400 + 148
-	IopDivF64 IROp = 0x1400 + 149
-
-	// IRRoundingMode(I32) x F32 x F32 -> F32
-	IopAddF32 IROp = 0x1400 + 150
-	IopSubF32 IROp = 0x1400 + 151
-	IopMulF32 IROp = 0x1400 + 152
-	IopDivF32 IROp = 0x1400 + 153
-
-	// 结果先舍入到IEEE浮点范围的变体
-	IopAddF64r32 IROp = 0x1400 + 154
-	IopSubF64r32 IROp = 0x1400 + 155
-	IopMulF64r32 IROp = 0x1400 + 156
-	IopDivF64r32 IROp = 0x1400 + 157
-
-	// 一元操作，不带舍入
-	IopNegF64 IROp = 0x1400 + 158 // F64 -> F64
-	IopAbsF64 IROp = 0x1400 + 159 // F64 -> F64
-
-	IopNegF32 IROp = 0x1400 + 160 // F32 -> F32
-	IopAbsF32 IROp = 0x1400 + 161 // F32 -> F32
-
-	// 浮点操作 - 开方、比较
-	IopSqrtF64 IROp = 0x1400 + 162 // IRRoundingMode(I32) x F64 -> F64
-	IopSqrtF32 IROp = 0x1400 + 163 // IRRoundingMode(I32) x F32 -> F32
-	IopCmpF64  IROp = 0x1400 + 164 // F64 x F64 -> IRCmpF64Result(I32)
-	IopCmpF32  IROp = 0x1400 + 165 // F32 x F32 -> IRCmpF32Result(I32)
-	IopCmpF128 IROp = 0x1400 + 166 // F128 x F128 -> IRCmpF128Result(I32)
-
-	// 浮点数与整数转换
-	IopF64toI16S IROp = 0x1400 + 167 // IRRoundingMode(I32) x F64 -> signed I16
-	IopF64toI32S IROp = 0x1400 + 168 // IRRoundingMode(I32) x F64 -> signed I32
-	IopF64toI64S IROp = 0x1400 + 169 // IRRoundingMode(I32) x F64 -> signed I64
-	IopF64toI64U IROp = 0x1400 + 170 // IRRoundingMode(I32) x F64 -> unsigned I64
-	IopF64toI32U IROp = 0x1400 + 171 // IRRoundingMode(I32) x F64 -> unsigned I32
-
-	IopI32StoF64 IROp = 0x1400 + 172 // signed I32 -> F64
-	IopI64StoF64 IROp = 0x1400 + 173 // IRRoundingMode(I32) x signed I64 -> F64
-	IopI64UtoF64 IROp = 0x1400 + 174 // IRRoundingMode(I32) x unsigned I64 -> F64
-	IopI64UtoF32 IROp = 0x1400 + 175 // IRRoundingMode(I32) x unsigned I64 -> F32
-	IopI32UtoF32 IROp = 0x1400 + 176 // IRRoundingMode(I32) x unsigned I32 -> F32
-	IopI32UtoF64 IROp = 0x1400 + 177 // unsigned I32 -> F64
-
-	IopF32toI32S IROp = 0x1400 + 178 // IRRoundingMode(I32) x F32 -> signed I32
-	IopF32toI64S IROp = 0x1400 + 179 // IRRoundingMode(I32) x F32 -> signed I64
-	IopF32toI32U IROp = 0x1400 + 180 // IRRoundingMode(I32) x F32 -> unsigned I32
-	IopF32toI64U IROp = 0x1400 + 181 // IRRoundingMode(I32) x F32 -> unsigned I64
-
-	// 有符号整数到浮点数的转换
-	IopI32StoF32 IROp = 0x1400 + 182 // IRRoundingMode(I32) x signed I32 -> F32
-	IopI64StoF32 IROp = 0x1400 + 183 // IRRoundingMode(I32) x signed I64 -> F32
-
-	// 浮点格式之间的转换
-	IopF32toF64 IROp = 0x1400 + 184 // F32 -> F64
-	IopF64toF32 IROp = 0x1400 + 185 // IRRoundingMode(I32) x F64 -> F32
-
-	// 重新解释：将F64转为I64（保持相同的位模式），或反向操作
-	IopReinterpF64asI64 IROp = 0x1400 + 186 // F64 -> I64，保持位模式
-	IopReinterpI64asF64 IROp = 0x1400 + 187 // I64 -> F64，保持位模式
-	IopReinterpF32asI32 IROp = 0x1400 + 188 // F32 -> I32，保持位模式
-	IopReinterpI32asF32 IROp = 0x1400 + 189 // I32 -> F32，保持位模式
-
-	// 支持128位浮点数
-	IopF64HLtoF128 IROp = 0x1400 + 190 // (F128的高半部分,F128的低半部分) -> F128
-	IopF128HItoF64 IROp = 0x1400 + 191 // F128 -> F128的高半部分到F64寄存器
-	IopF128LOtoF64 IROp = 0x1400 + 192 // F128 -> F128的低半部分到F64寄存器
-
-	// 128位浮点算术运算
-	// :: IRRoundingMode(I32) x F128 x F128 -> F128
-	IopAddF128     IROp = 0x1400 + 193 // 加法
-	IopSubF128     IROp = 0x1400 + 194 // 减法
-	IopMulF128     IROp = 0x1400 + 195 // 乘法
-	IopDivF128     IROp = 0x1400 + 196 // 除法
-	IopMAddF128    IROp = 0x1400 + 197 // (A * B) + C
-	IopMSubF128    IROp = 0x1400 + 198 // (A * B) - C
-	IopNegMAddF128 IROp = 0x1400 + 199 // -((A * B) + C)
-	IopNegMSubF128 IROp = 0x1400 + 200 // -((A * B) - C)
-	IopNegF128     IROp = 0x1400 + 201 // 取负
-	IopAbsF128     IROp = 0x1400 + 202 // 绝对值
-
-	// :: IRRoundingMode(I32) x F128 -> F128
-	IopSqrtF128 IROp = 0x1400 + 203 // 平方根
-
-	// 整数到F128的转换
-	IopI32StoF128 IROp = 0x1400 + 204 // signed I32 -> F128
-	IopI64StoF128 IROp = 0x1400 + 205 // signed I64 -> F128
-	IopI32UtoF128 IROp = 0x1400 + 206 // unsigned I32 -> F128
-	IopI64UtoF128 IROp = 0x1400 + 207 // unsigned I64 -> F128
-	IopF32toF128  IROp = 0x1400 + 208 // F32 -> F128
-	IopF64toF128  IROp = 0x1400 + 209 // F64 -> F128
-
-	// F128到整数的转换
-	IopF128toI32S  IROp = 0x1400 + 210 // IRRoundingMode(I32) x F128 -> signed I32
-	IopF128toI64S  IROp = 0x1400 + 211 // IRRoundingMode(I32) x F128 -> signed I64
-	IopF128toI32U  IROp = 0x1400 + 212 // IRRoundingMode(I32) x F128 -> unsigned I32
-	IopF128toI64U  IROp = 0x1400 + 213 // IRRoundingMode(I32) x F128 -> unsigned I64
-	IopF128toI128S IROp = 0x1400 + 214 // IRRoundingMode(I32) x F128 -> signed I128
-	IopF128toF64   IROp = 0x1400 + 215 // IRRoundingMode(I32) x F128 -> F64
-	IopF128toF32   IROp = 0x1400 + 216 // IRRoundingMode(I32) x F128 -> F32
-	IopRndF128     IROp = 0x1400 + 217 // IRRoundingMode(I32) x F128 -> F128
-
-	// 截断到指定值，源和结果存储在F128寄存器中
-	IopTruncF128toI32S IROp = 0x1400 + 218 // truncate F128 -> I32
-	IopTruncF128toI32U IROp = 0x1400 + 219 // truncate F128 -> I32
-	IopTruncF128toI64U IROp = 0x1400 + 220 // truncate F128 -> I64
-	IopTruncF128toI64S IROp = 0x1400 + 221 // truncate F128 -> I64
-
-	// --- x86/amd64特定操作，非754标准要求 ---
-	// :: IRRoundingMode(I32) x F64 x F64 -> F64
-	IopAtanF64       IROp = 0x1400 + 222 // FPATAN, arctan(arg1/arg2)
-	IopYl2xF64       IROp = 0x1400 + 223 // FYL2X, arg1 * log2(arg2)
-	IopYl2xp1F64     IROp = 0x1400 + 224 // FYL2XP1, arg1 * log2(arg2+1.0)
-	IopPRemF64       IROp = 0x1400 + 225 // FPREM, 非IEEE余数(arg1/arg2)
-	IopPRemC3210F64  IROp = 0x1400 + 226 // FPREM结果的C3210标志位, :: I32
-	IopPRem1F64      IROp = 0x1400 + 227 // FPREM1, IEEE余数(arg1/arg2)
-	IopPRem1C3210F64 IROp = 0x1400 + 228 // FPREM1结果的C3210标志位, :: I32
-	IopScaleF64      IROp = 0x1400 + 229 // FSCALE, arg1 * (2^RoundTowardsZero(arg2))
-
-	// :: IRRoundingMode(I32) x F64 -> F64
-	IopSinF64         IROp = 0x1400 + 230 // FSIN
-	IopCosF64         IROp = 0x1400 + 231 // FCOS
-	IopTanF64         IROp = 0x1400 + 232 // FTAN
-	Iop2xm1F64        IROp = 0x1400 + 233 // (2^arg - 1.0)
-	IopRoundF128toInt IROp = 0x1400 + 234 // F128值舍入到最接近的整数值(仍为F128)
-	IopRoundF64toInt  IROp = 0x1400 + 235 // F64值舍入到最接近的整数值(仍为F64)
-	IopRoundF32toInt  IROp = 0x1400 + 236 // F32值舍入到最接近的整数值(仍为F32)
-
-	// --- guest s390特定操作，非754标准要求 ---
-	IopMAddF32 IROp = 0x1400 + 237 // (A * B) + C
-	IopMSubF32 IROp = 0x1400 + 238 // (A * B) - C
-
-	// --- guest ppc32/64特定操作，非754标准要求 ---
-	IopMAddF64 IROp = 0x1400 + 239 // (A * B) + C
-	IopMSubF64 IROp = 0x1400 + 240 // (A * B) - C
-
-	IopMAddF64r32 IROp = 0x1400 + 241 // (A * B) + C，结果先舍入到F32范围
-	IopMSubF64r32 IROp = 0x1400 + 242 // (A * B) - C，结果先舍入到F32范围
-
-	IopRSqrtEst5GoodF64      IROp = 0x1400 + 243 // 倒数平方根估计，5个有效位
-	IopRoundF64toF64_NEAREST IROp = 0x1400 + 244 // frin，舍入到最近
-	IopRoundF64toF64_NegINF  IROp = 0x1400 + 245 // frim，舍入到负无穷
-	IopRoundF64toF64_PosINF  IROp = 0x1400 + 246 // frip，舍入到正无穷
-	IopRoundF64toF64_ZERO    IROp = 0x1400 + 247 // friz，舍入到零
-
-	IopTruncF64asF32 IROp = 0x1400 + 248 // 按'fsts'执行F64->F32截断
-
-	IopRoundF64toF32 IROp = 0x1400 + 249 // 将F64舍入到最接近的F32值(仍为F64)
-
-	// --- guest arm64特定操作，非754标准要求 ---
-	IopRecpExpF64 IROp = 0x1400 + 250 // FRECPX d :: IRRoundingMode(I32) x F64 -> F64
-	IopRecpExpF32 IROp = 0x1400 + 251 // FRECPX s :: IRRoundingMode(I32) x F32 -> F32
-
-	// --------- 可能由IEEE 754-2008要求 ---------
-	IopMaxNumF64 IROp = 0x1400 + 252 // max, F64, 如果另一个是qNaN则返回数值操作数
-	IopMinNumF64 IROp = 0x1400 + 253 // min, F64, 同上
-	IopMaxNumF32 IROp = 0x1400 + 254 // max, F32, 同上
-	IopMinNumF32 IROp = 0x1400 + 255 // min, F32, 同上
-
-	// ------------------ 16位标量FP ------------------
-	IopF16toF64 IROp = 0x1400 + 256 // F16 -> F64
-	IopF64toF16 IROp = 0x1400 + 257 // IRRoundingMode(I32) x F64 -> F16
-
-	IopF16toF32 IROp = 0x1400 + 258 // F16 -> F32
-	IopF32toF16 IROp = 0x1400 + 259 // IRRoundingMode(I32) x F32 -> F16
-
-	// ------------------ 32位SIMD整数 ------------------
-	IopQAdd32S IROp = 0x1400 + 260
-	IopQSub32S IROp = 0x1400 + 261
-
-	IopAdd16x2   IROp = 0x1400 + 262
-	IopSub16x2   IROp = 0x1400 + 263
-	IopQAdd16Sx2 IROp = 0x1400 + 264
-	IopQAdd16Ux2 IROp = 0x1400 + 265
-	IopQSub16Sx2 IROp = 0x1400 + 266
-	IopQSub16Ux2 IROp = 0x1400 + 267
-
-	IopHAdd16Ux2 IROp = 0x1400 + 268
-	IopHAdd16Sx2 IROp = 0x1400 + 269
-	IopHSub16Ux2 IROp = 0x1400 + 270
-	IopHSub16Sx2 IROp = 0x1400 + 271
-
-	IopAdd8x4   IROp = 0x1400 + 272
-	IopSub8x4   IROp = 0x1400 + 273
-	IopQAdd8Sx4 IROp = 0x1400 + 274
-	IopQAdd8Ux4 IROp = 0x1400 + 275
-	IopQSub8Sx4 IROp = 0x1400 + 276
-	IopQSub8Ux4 IROp = 0x1400 + 277
-
-	// 8x4有符号/无符号半加/减。对每个通道，计算
-	// sx(argL) + sx(argR)的位8:1，
-	// 或zx(argL) - zx(argR)等
-	IopHAdd8Ux4 IROp = 0x1400 + 278
-	IopHAdd8Sx4 IROp = 0x1400 + 279
-	IopHSub8Ux4 IROp = 0x1400 + 280
-	IopHSub8Sx4 IROp = 0x1400 + 281
-
-	// 8x4无符号绝对差的和
-	IopSad8Ux4 IROp = 0x1400 + 282
-
-	// 其他(向量整数比较 != 0)
-	IopCmpNEZ16x2 IROp = 0x1400 + 283
-	IopCmpNEZ8x4  IROp = 0x1400 + 284
-
-	// ------------------ 64位SIMD浮点 --------------------
-
-	// 转换到/从整数
-	IopI32UtoFx2    IROp = 0x1400 + 285 // I32x4 -> F32x4
-	IopI32StoFx2    IROp = 0x1400 + 286 // I32x4 -> F32x4
-	IopFtoI32Ux2_RZ IROp = 0x1400 + 287 // F32x4 -> I32x4
-	IopFtoI32Sx2_RZ IROp = 0x1400 + 288 // F32x4 -> I32x4
-
-	// Fixed32格式是具有固定小数位数的浮点数。
-	// 小数位数作为I8类型的第二个参数传递。
-	IopF32ToFixed32Ux2_RZ IROp = 0x1400 + 289 // fp -> 定点
-	IopF32ToFixed32Sx2_RZ IROp = 0x1400 + 290 // fp -> 定点
-	IopFixed32UToF32x2_RN IROp = 0x1400 + 291 // 定点 -> fp
-	IopFixed32SToF32x2_RN IROp = 0x1400 + 292 // 定点 -> fp
-
-	// 二元操作
-	IopMax32Fx2 IROp = 0x1400 + 293
-	IopMin32Fx2 IROp = 0x1400 + 294
-
-	// 成对最小和最大值
-	IopPwMax32Fx2 IROp = 0x1400 + 295
-	IopPwMin32Fx2 IROp = 0x1400 + 296
-
-	// 注意：对于以下比较，arm前端假设参数中任一通道的nan返回该通道的零。
-	IopCmpEQ32Fx2 IROp = 0x1400 + 297
-	IopCmpGT32Fx2 IROp = 0x1400 + 298
-	IopCmpGE32Fx2 IROp = 0x1400 + 299
-
-	// 向量倒数估计在操作数向量的每个元素中找到近似倒数，
-	// 并将结果放在目标向量中。
-	IopRecipEst32Fx2 IROp = 0x1400 + 300
-
-	// 向量倒数步骤计算(2.0 - arg1 * arg2)。
-	// 注意，如果一个参数为零，另一个为任意符号的无穷大，操作结果为2.0。
-	IopRecipStep32Fx2 IROp = 0x1400 + 301
-
-	// 向量倒数平方根估计在操作数向量的每个元素中找到近似倒数平方根。
-	IopRSqrtEst32Fx2 IROp = 0x1400 + 302
-
-	// 向量倒数平方根步骤计算(3.0 - arg1 * arg2) / 2.0。
-	// 注意，如果一个参数为零，另一个为任意符号的无穷大，操作结果为1.5。
-	IopRSqrtStep32Fx2 IROp = 0x1400 + 303
-
-	// 一元操作
-	IopNeg32Fx2 IROp = 0x1400 + 304
-	IopAbs32Fx2 IROp = 0x1400 + 305
-
-	// ------------------ 64位SIMD整数 --------------------
-
-	// 其他(向量整数比较 != 0)
-	IopCmpNEZ8x8  IROp = 0x1400 + 306
-	IopCmpNEZ16x4 IROp = 0x1400 + 307
-	IopCmpNEZ32x2 IROp = 0x1400 + 308
-
-	// 加法(普通/无符号饱和/有符号饱和)
-	IopAdd8x8    IROp = 0x1400 + 309
-	IopAdd16x4   IROp = 0x1400 + 310
-	IopAdd32x2   IROp = 0x1400 + 311
-	IopQAdd8Ux8  IROp = 0x1400 + 312
-	IopQAdd16Ux4 IROp = 0x1400 + 313
-	IopQAdd32Ux2 IROp = 0x1400 + 314
-	IopQAdd64Ux1 IROp = 0x1400 + 315
-	IopQAdd8Sx8  IROp = 0x1400 + 316
-	IopQAdd16Sx4 IROp = 0x1400 + 317
-	IopQAdd32Sx2 IROp = 0x1400 + 318
-	IopQAdd64Sx1 IROp = 0x1400 + 319
-
-	// 成对操作 - 对向量内每对相邻元素执行操作
-	IopPwAdd8x8  IROp = 0x1400 + 320 // 成对加法8x8
-	IopPwAdd16x4 IROp = 0x1400 + 321 // 成对加法16x4
-	IopPwAdd32x2 IROp = 0x1400 + 322 // 成对加法32x2
-
-	// 有符号/无符号成对最大值
-	IopPwMax8Sx8  IROp = 0x1400 + 323 // 成对有符号最大值8x8
-	IopPwMax16Sx4 IROp = 0x1400 + 324 // 成对有符号最大值16x4
-	IopPwMax32Sx2 IROp = 0x1400 + 325 // 成对有符号最大值32x2
-	IopPwMax8Ux8  IROp = 0x1400 + 326 // 成对无符号最大值8x8
-	IopPwMax16Ux4 IROp = 0x1400 + 327 // 成对无符号最大值16x4
-	IopPwMax32Ux2 IROp = 0x1400 + 328 // 成对无符号最大值32x2
-
-	// 有符号/无符号成对最小值
-	IopPwMin8Sx8  IROp = 0x1400 + 329 // 成对有符号最小值8x8
-	IopPwMin16Sx4 IROp = 0x1400 + 330 // 成对有符号最小值16x4
-	IopPwMin32Sx2 IROp = 0x1400 + 331 // 成对有符号最小值32x2
-	IopPwMin8Ux8  IROp = 0x1400 + 332 // 成对无符号最小值8x8
-	IopPwMin16Ux4 IROp = 0x1400 + 333 // 成对无符号最小值16x4
-	IopPwMin32Ux2 IROp = 0x1400 + 334 // 成对无符号最小值32x2
-
-	// 长度扩展变体是一元的。结果向量包含比操作数少两倍的元素，但它们宽两倍。
-	// 例如:
-	//    IopPwAddL16Ux4([a,b,c,d]) = [a+b,c+d]
-	//    其中a+b和c+d是无符号32位值。
-	IopPwAddL8Ux8  IROp = 0x1400 + 335 // 成对加法无符号长度扩展8x8
-	IopPwAddL16Ux4 IROp = 0x1400 + 336 // 成对加法无符号长度扩展16x4
-	IopPwAddL32Ux2 IROp = 0x1400 + 337 // 成对加法无符号长度扩展32x2
-	IopPwAddL8Sx8  IROp = 0x1400 + 338 // 成对加法有符号长度扩展8x8
-	IopPwAddL16Sx4 IROp = 0x1400 + 339 // 成对加法有符号长度扩展16x4
-	IopPwAddL32Sx2 IROp = 0x1400 + 340 // 成对加法有符号长度扩展32x2
-
-	// 减法(普通/无符号饱和/有符号饱和)
-	IopSub8x8    IROp = 0x1400 + 341 // 减法8x8
-	IopSub16x4   IROp = 0x1400 + 342 // 减法16x4
-	IopSub32x2   IROp = 0x1400 + 343 // 减法32x2
-	IopQSub8Ux8  IROp = 0x1400 + 344 // 无符号饱和减法8x8
-	IopQSub16Ux4 IROp = 0x1400 + 345 // 无符号饱和减法16x4
-	IopQSub32Ux2 IROp = 0x1400 + 346 // 无符号饱和减法32x2
-	IopQSub64Ux1 IROp = 0x1400 + 347 // 无符号饱和减法64x1
-	IopQSub8Sx8  IROp = 0x1400 + 348 // 有符号饱和减法8x8
-	IopQSub16Sx4 IROp = 0x1400 + 349 // 有符号饱和减法16x4
-	IopQSub32Sx2 IROp = 0x1400 + 350 // 有符号饱和减法32x2
-	IopQSub64Sx1 IROp = 0x1400 + 351 // 有符号饱和减法64x1
-
-	// 绝对值
-	IopAbs8x8  IROp = 0x1400 + 352 // 绝对值8x8
-	IopAbs16x4 IROp = 0x1400 + 353 // 绝对值16x4
-	IopAbs32x2 IROp = 0x1400 + 354 // 绝对值32x2
-
-	// 乘法(普通/有符号或无符号高半部分/多项式)
-	IopMul8x8     IROp = 0x1400 + 355 // 乘法8x8
-	IopMul16x4    IROp = 0x1400 + 356 // 乘法16x4
-	IopMul32x2    IROp = 0x1400 + 357 // 乘法32x2
-	IopMul32Fx2   IROp = 0x1400 + 358 // 浮点乘法32x2
-	IopMulHi16Ux4 IROp = 0x1400 + 359 // 无符号高半部分乘法16x4
-	IopMulHi16Sx4 IROp = 0x1400 + 360 // 有符号高半部分乘法16x4
-
-	// 多项式乘法将参数视为{0,1}上多项式的系数
-	IopPolynomialMul8x8 IROp = 0x1400 + 361 // 多项式乘法8x8
-
-	// 向量饱和双倍乘法返回高半部分和向量饱和舍入双倍乘法返回高半部分
-	// 这些IROp将两个向量中的对应元素相乘，结果加倍，并将最终结果的最高有效半部分放在目标向量中。
-	// 结果被截断或舍入。如果任何结果溢出，它们将被饱和处理。
-	IopQDMulHi16Sx4  IROp = 0x1400 + 362 // 饱和双倍乘法返回高半部分16x4
-	IopQDMulHi32Sx2  IROp = 0x1400 + 363 // 饱和双倍乘法返回高半部分32x2
-	IopQRDMulHi16Sx4 IROp = 0x1400 + 364 // 饱和舍入双倍乘法返回高半部分16x4
-	IopQRDMulHi32Sx2 IROp = 0x1400 + 365 // 饱和舍入双倍乘法返回高半部分32x2
-
-	// 平均值：注意：(arg1 + arg2 + 1) >>u 1
-	IopAvg8Ux8  IROp = 0x1400 + 366 // 无符号平均值8x8
-	IopAvg16Ux4 IROp = 0x1400 + 367 // 无符号平均值16x4
-
-	// 最大值/最小值
-	IopMax8Sx8  IROp = 0x1400 + 368 // 有符号最大值8x8
-	IopMax16Sx4 IROp = 0x1400 + 369 // 有符号最大值16x4
-	IopMax32Sx2 IROp = 0x1400 + 370 // 有符号最大值32x2
-	IopMax8Ux8  IROp = 0x1400 + 371 // 无符号最大值8x8
-	IopMax16Ux4 IROp = 0x1400 + 372 // 无符号最大值16x4
-	IopMax32Ux2 IROp = 0x1400 + 373 // 无符号最大值32x2
-	IopMin8Sx8  IROp = 0x1400 + 374 // 有符号最小值8x8
-	IopMin16Sx4 IROp = 0x1400 + 375 // 有符号最小值16x4
-	IopMin32Sx2 IROp = 0x1400 + 376 // 有符号最小值32x2
-	IopMin8Ux8  IROp = 0x1400 + 377 // 无符号最小值8x8
-	IopMin16Ux4 IROp = 0x1400 + 378 // 无符号最小值16x4
-	IopMin32Ux2 IROp = 0x1400 + 379 // 无符号最小值32x2
-
-	// 比较
-	IopCmpEQ8x8   IROp = 0x1400 + 380 // 相等比较8x8
-	IopCmpEQ16x4  IROp = 0x1400 + 381 // 相等比较16x4
-	IopCmpEQ32x2  IROp = 0x1400 + 382 // 相等比较32x2
-	IopCmpGT8Ux8  IROp = 0x1400 + 383 // 无符号大于比较8x8
-	IopCmpGT16Ux4 IROp = 0x1400 + 384 // 无符号大于比较16x4
-	IopCmpGT32Ux2 IROp = 0x1400 + 385 // 无符号大于比较32x2
-	IopCmpGT8Sx8  IROp = 0x1400 + 386 // 有符号大于比较8x8
-	IopCmpGT16Sx4 IROp = 0x1400 + 387 // 有符号大于比较16x4
-	IopCmpGT32Sx2 IROp = 0x1400 + 388 // 有符号大于比较32x2
-
-	// 计数：比特位1的数量/前导零/前导符号位（不包括最高位）
-	IopCnt8x8  IROp = 0x1400 + 389 // 计数比特位中1的数量8x8
-	IopClz8x8  IROp = 0x1400 + 390 // 计数前导零8x8
-	IopClz16x4 IROp = 0x1400 + 391 // 计数前导零16x4
-	IopClz32x2 IROp = 0x1400 + 392 // 计数前导零32x2
-	IopCls8x8  IROp = 0x1400 + 393 // 计数前导符号位8x8
-	IopCls16x4 IROp = 0x1400 + 394 // 计数前导符号位16x4
-	IopCls32x2 IROp = 0x1400 + 395 // 计数前导符号位32x2
-	IopClz64x2 IROp = 0x1400 + 396 // 计数前导零64x2
-
-	// 向量计数尾随零
-	IopCtz8x16 IROp = 0x1400 + 397 // 计数尾随零8x16
-	IopCtz16x8 IROp = 0x1400 + 398 // 计数尾随零16x8
-	IopCtz32x4 IROp = 0x1400 + 399 // 计数尾随零32x4
-	IopCtz64x2 IROp = 0x1400 + 400 // 计数尾随零64x2
-
-	// 向量x向量 移位/旋转
-	IopShl8x8  IROp = 0x1400 + 401 // 左移8x8
-	IopShl16x4 IROp = 0x1400 + 402 // 左移16x4
-	IopShl32x2 IROp = 0x1400 + 403 // 左移32x2
-	IopShr8x8  IROp = 0x1400 + 404 // 逻辑右移8x8
-	IopShr16x4 IROp = 0x1400 + 405 // 逻辑右移16x4
-	IopShr32x2 IROp = 0x1400 + 406 // 逻辑右移32x2
-	IopSar8x8  IROp = 0x1400 + 407 // 算术右移8x8
-	IopSar16x4 IROp = 0x1400 + 408 // 算术右移16x4
-	IopSar32x2 IROp = 0x1400 + 409 // 算术右移32x2
-	IopSal8x8  IROp = 0x1400 + 410 // 算术左移8x8
-	IopSal16x4 IROp = 0x1400 + 411 // 算术左移16x4
-	IopSal32x2 IROp = 0x1400 + 412 // 算术左移32x2
-	IopSal64x1 IROp = 0x1400 + 413 // 算术左移64x1
-
-	// 向量x标量 移位（移位量 :: Ity_I8）
-	IopShlN8x8  IROp = 0x1400 + 414 // 标量左移8x8
-	IopShlN16x4 IROp = 0x1400 + 415 // 标量左移16x4
-	IopShlN32x2 IROp = 0x1400 + 416 // 标量左移32x2
-	IopShrN8x8  IROp = 0x1400 + 417 // 标量逻辑右移8x8
-	IopShrN16x4 IROp = 0x1400 + 418 // 标量逻辑右移16x4
-	IopShrN32x2 IROp = 0x1400 + 419 // 标量逻辑右移32x2
-	IopSarN8x8  IROp = 0x1400 + 420 // 标量算术右移8x8
-	IopSarN16x4 IROp = 0x1400 + 421 // 标量算术右移16x4
-	IopSarN32x2 IROp = 0x1400 + 422 // 标量算术右移32x2
-
-	// 向量x向量 饱和移位
-	IopQShl8x8  IROp = 0x1400 + 423 // 饱和左移8x8
-	IopQShl16x4 IROp = 0x1400 + 424 // 饱和左移16x4
-	IopQShl32x2 IROp = 0x1400 + 425 // 饱和左移32x2
-	IopQShl64x1 IROp = 0x1400 + 426 // 饱和左移64x1
-	IopQSal8x8  IROp = 0x1400 + 427 // 饱和算术左移8x8
-	IopQSal16x4 IROp = 0x1400 + 428 // 饱和算术左移16x4
-	IopQSal32x2 IROp = 0x1400 + 429 // 饱和算术左移32x2
-	IopQSal64x1 IROp = 0x1400 + 430 // 饱和算术左移64x1
-
-	// 向量x整数 饱和移位
-	IopQShlNsatSU8x8  IROp = 0x1400 + 431 // 有符号到无符号饱和左移8x8
-	IopQShlNsatSU16x4 IROp = 0x1400 + 432 // 有符号到无符号饱和左移16x4
-	IopQShlNsatSU32x2 IROp = 0x1400 + 433 // 有符号到无符号饱和左移32x2
-	IopQShlNsatSU64x1 IROp = 0x1400 + 434 // 有符号到无符号饱和左移64x1
-	IopQShlNsatUU8x8  IROp = 0x1400 + 435 // 无符号到无符号饱和左移8x8
-	IopQShlNsatUU16x4 IROp = 0x1400 + 436 // 无符号到无符号饱和左移16x4
-	IopQShlNsatUU32x2 IROp = 0x1400 + 437 // 无符号到无符号饱和左移32x2
-	IopQShlNsatUU64x1 IROp = 0x1400 + 438 // 无符号到无符号饱和左移64x1
-	IopQShlNsatSS8x8  IROp = 0x1400 + 439 // 有符号到有符号饱和左移8x8
-	IopQShlNsatSS16x4 IROp = 0x1400 + 440 // 有符号到有符号饱和左移16x4
-	IopQShlNsatSS32x2 IROp = 0x1400 + 441 // 有符号到有符号饱和左移32x2
-	IopQShlNsatSS64x1 IROp = 0x1400 + 442 // 有符号到有符号饱和左移64x1
-
-	// 缩小（二元）
-	// -- 将2xI64缩小为1xI64，高半部分来自左参数
-	IopQNarrowBin16Sto8Ux8  IROp = 0x1400 + 443 // 有符号16位到无符号8位x8
-	IopQNarrowBin16Sto8Sx8  IROp = 0x1400 + 444 // 有符号16位到有符号8位x8
-	IopQNarrowBin32Sto16Sx4 IROp = 0x1400 + 445 // 有符号32位到有符号16位x4
+	IopINVALID                    IROp = 0x1400 // 5120
+	IopAdd8                       IROp = 0x1401 // 5121
+	IopAdd16                      IROp = 0x1402 // 5122
+	IopAdd32                      IROp = 0x1403 // 5123
+	IopAdd64                      IROp = 0x1404 // 5124
+	IopSub8                       IROp = 0x1405 // 5125
+	IopSub16                      IROp = 0x1406 // 5126
+	IopSub32                      IROp = 0x1407 // 5127
+	IopSub64                      IROp = 0x1408 // 5128
+	IopMul8                       IROp = 0x1409 // 5129
+	IopMul16                      IROp = 0x140A // 5130
+	IopMul32                      IROp = 0x140B // 5131
+	IopMul64                      IROp = 0x140C // 5132
+	IopOr8                        IROp = 0x140D // 5133
+	IopOr16                       IROp = 0x140E // 5134
+	IopOr32                       IROp = 0x140F // 5135
+	IopOr64                       IROp = 0x1410 // 5136
+	IopAnd8                       IROp = 0x1411 // 5137
+	IopAnd16                      IROp = 0x1412 // 5138
+	IopAnd32                      IROp = 0x1413 // 5139
+	IopAnd64                      IROp = 0x1414 // 5140
+	IopXor8                       IROp = 0x1415 // 5141
+	IopXor16                      IROp = 0x1416 // 5142
+	IopXor32                      IROp = 0x1417 // 5143
+	IopXor64                      IROp = 0x1418 // 5144
+	IopShl8                       IROp = 0x1419 // 5145
+	IopShl16                      IROp = 0x141A // 5146
+	IopShl32                      IROp = 0x141B // 5147
+	IopShl64                      IROp = 0x141C // 5148
+	IopShr8                       IROp = 0x141D // 5149
+	IopShr16                      IROp = 0x141E // 5150
+	IopShr32                      IROp = 0x141F // 5151
+	IopShr64                      IROp = 0x1420 // 5152
+	IopSar8                       IROp = 0x1421 // 5153
+	IopSar16                      IROp = 0x1422 // 5154
+	IopSar32                      IROp = 0x1423 // 5155
+	IopSar64                      IROp = 0x1424 // 5156
+	IopCmpEQ8                     IROp = 0x1425 // 5157
+	IopCmpEQ16                    IROp = 0x1426 // 5158
+	IopCmpEQ32                    IROp = 0x1427 // 5159
+	IopCmpEQ64                    IROp = 0x1428 // 5160
+	IopCmpNE8                     IROp = 0x1429 // 5161
+	IopCmpNE16                    IROp = 0x142A // 5162
+	IopCmpNE32                    IROp = 0x142B // 5163
+	IopCmpNE64                    IROp = 0x142C // 5164
+	IopNot8                       IROp = 0x142D // 5165
+	IopNot16                      IROp = 0x142E // 5166
+	IopNot32                      IROp = 0x142F // 5167
+	IopNot64                      IROp = 0x1430 // 5168
+	IopCasCmpEQ8                  IROp = 0x1431 // 5169
+	IopCasCmpEQ16                 IROp = 0x1432 // 5170
+	IopCasCmpEQ32                 IROp = 0x1433 // 5171
+	IopCasCmpEQ64                 IROp = 0x1434 // 5172
+	IopCasCmpNE8                  IROp = 0x1435 // 5173
+	IopCasCmpNE16                 IROp = 0x1436 // 5174
+	IopCasCmpNE32                 IROp = 0x1437 // 5175
+	IopCasCmpNE64                 IROp = 0x1438 // 5176
+	IopExpCmpNE8                  IROp = 0x1439 // 5177
+	IopExpCmpNE16                 IROp = 0x143A // 5178
+	IopExpCmpNE32                 IROp = 0x143B // 5179
+	IopExpCmpNE64                 IROp = 0x143C // 5180
+	IopMullS8                     IROp = 0x143D // 5181
+	IopMullS16                    IROp = 0x143E // 5182
+	IopMullS32                    IROp = 0x143F // 5183
+	IopMullS64                    IROp = 0x1440 // 5184
+	IopMullU8                     IROp = 0x1441 // 5185
+	IopMullU16                    IROp = 0x1442 // 5186
+	IopMullU32                    IROp = 0x1443 // 5187
+	IopMullU64                    IROp = 0x1444 // 5188
+	IopClz64                      IROp = 0x1445 // 5189
+	IopClz32                      IROp = 0x1446 // 5190
+	IopCtz64                      IROp = 0x1447 // 5191
+	IopCtz32                      IROp = 0x1448 // 5192
+	IopCmpLT32S                   IROp = 0x1449 // 5193
+	IopCmpLT64S                   IROp = 0x144A // 5194
+	IopCmpLE32S                   IROp = 0x144B // 5195
+	IopCmpLE64S                   IROp = 0x144C // 5196
+	IopCmpLT32U                   IROp = 0x144D // 5197
+	IopCmpLT64U                   IROp = 0x144E // 5198
+	IopCmpLE32U                   IROp = 0x144F // 5199
+	IopCmpLE64U                   IROp = 0x1450 // 5200
+	IopCmpNEZ8                    IROp = 0x1451 // 5201
+	IopCmpNEZ16                   IROp = 0x1452 // 5202
+	IopCmpNEZ32                   IROp = 0x1453 // 5203
+	IopCmpNEZ64                   IROp = 0x1454 // 5204
+	IopCmpwNEZ32                  IROp = 0x1455 // 5205
+	IopCmpwNEZ64                  IROp = 0x1456 // 5206
+	IopLeft8                      IROp = 0x1457 // 5207
+	IopLeft16                     IROp = 0x1458 // 5208
+	IopLeft32                     IROp = 0x1459 // 5209
+	IopLeft64                     IROp = 0x145A // 5210
+	IopMax32U                     IROp = 0x145B // 5211
+	IopCmpORD32U                  IROp = 0x145C // 5212
+	IopCmpORD64U                  IROp = 0x145D // 5213
+	IopCmpORD32S                  IROp = 0x145E // 5214
+	IopCmpORD64S                  IROp = 0x145F // 5215
+	IopDivU32                     IROp = 0x1460 // :: I32,I32 -> I32 (simple div, no mod)
+	IopDivS32                     IROp = 0x1461 // ditto, signed
+	IopDivU64                     IROp = 0x1462 // :: I64,I64 -> I64 (simple div, no mod)
+	IopDivS64                     IROp = 0x1463 // ditto, signed
+	IopDivU64E                    IROp = 0x1464 // :: I64,I64 -> I64 (dividend is 64-bit arg (hi)
+	IopDivS64E                    IROp = 0x1465 // ditto, signed
+	IopDivU32E                    IROp = 0x1466 // :: I32,I32 -> I32 (dividend is 32-bit arg (hi)
+	IopDivS32E                    IROp = 0x1467 // ditto, signed
+	IopDivModU64to32              IROp = 0x1468 // :: I64,I32 -> I64
+	IopDivModS64to32              IROp = 0x1469 // ditto, signed
+	IopDivModU128to64             IROp = 0x146A // :: V128,I64 -> V128
+	IopDivModS128to64             IROp = 0x146B // ditto, signed
+	IopDivModS64to64              IROp = 0x146C // :: I64,I64 -> I128
+	Iop8Uto16                     IROp = 0x146D // 5229
+	Iop8Uto32                     IROp = 0x146E // 5230
+	Iop8Uto64                     IROp = 0x146F // 5231
+	Iop16Uto32                    IROp = 0x1470 // 5232
+	Iop16Uto64                    IROp = 0x1471 // 5233
+	Iop32Uto64                    IROp = 0x1472 // 5234
+	Iop8Sto16                     IROp = 0x1473 // 5235
+	Iop8Sto32                     IROp = 0x1474 // 5236
+	Iop8Sto64                     IROp = 0x1475 // 5237
+	Iop16Sto32                    IROp = 0x1476 // 5238
+	Iop16Sto64                    IROp = 0x1477 // 5239
+	Iop32Sto64                    IROp = 0x1478 // 5240
+	Iop64to8                      IROp = 0x1479 // 5241
+	Iop32to8                      IROp = 0x147A // 5242
+	Iop64to16                     IROp = 0x147B // 5243
+	Iop16to8                      IROp = 0x147C // :: I16 -> I8, low half
+	Iop16HIto8                    IROp = 0x147D // :: I16 -> I8, high half
+	Iop8HLto16                    IROp = 0x147E // :: (I8,I8) -> I16
+	Iop32to16                     IROp = 0x147F // :: I32 -> I16, low half
+	Iop32HIto16                   IROp = 0x1480 // :: I32 -> I16, high half
+	Iop16HLto32                   IROp = 0x1481 // :: (I16,I16) -> I32
+	Iop64to32                     IROp = 0x1482 // :: I64 -> I32, low half
+	Iop64HIto32                   IROp = 0x1483 // :: I64 -> I32, high half
+	Iop32HLto64                   IROp = 0x1484 // :: (I32,I32) -> I64
+	Iop128to64                    IROp = 0x1485 // :: I128 -> I64, low half
+	Iop128HIto64                  IROp = 0x1486 // :: I128 -> I64, high half
+	Iop64HLto128                  IROp = 0x1487 // :: (I64,I64) -> I128
+	IopNot1                       IROp = 0x1488 // 5256
+	Iop32to1                      IROp = 0x1489 // 5257
+	Iop64to1                      IROp = 0x148A // 5258
+	Iop1Uto8                      IROp = 0x148B // 5259
+	Iop1Uto32                     IROp = 0x148C // 5260
+	Iop1Uto64                     IROp = 0x148D // 5261
+	Iop1Sto8                      IROp = 0x148E // 5262
+	Iop1Sto16                     IROp = 0x148F // 5263
+	Iop1Sto32                     IROp = 0x1490 // 5264
+	Iop1Sto64                     IROp = 0x1491 // 5265
+	IopAddF64                     IROp = 0x1492 // 5266
+	IopSubF64                     IROp = 0x1493 // 5267
+	IopMulF64                     IROp = 0x1494 // 5268
+	IopDivF64                     IROp = 0x1495 // 5269
+	IopAddF32                     IROp = 0x1496 // 5270
+	IopSubF32                     IROp = 0x1497 // 5271
+	IopMulF32                     IROp = 0x1498 // 5272
+	IopDivF32                     IROp = 0x1499 // 5273
+	IopAddF64r32                  IROp = 0x149A // 5274
+	IopSubF64r32                  IROp = 0x149B // 5275
+	IopMulF64r32                  IROp = 0x149C // 5276
+	IopDivF64r32                  IROp = 0x149D // 5277
+	IopNegF64                     IROp = 0x149E // 5278
+	IopAbsF64                     IROp = 0x149F // 5279
+	IopNegF32                     IROp = 0x14A0 // 5280
+	IopAbsF32                     IROp = 0x14A1 // 5281
+	IopSqrtF64                    IROp = 0x14A2 // 5282
+	IopSqrtF32                    IROp = 0x14A3 // 5283
+	IopCmpF64                     IROp = 0x14A4 // 5284
+	IopCmpF32                     IROp = 0x14A5 // 5285
+	IopCmpF128                    IROp = 0x14A6 // 5286
+	IopF64toI16S                  IROp = 0x14A7 // 5287
+	IopF64toI32S                  IROp = 0x14A8 // 5288
+	IopF64toI64S                  IROp = 0x14A9 // 5289
+	IopF64toI64U                  IROp = 0x14AA // 5290
+	IopF64toI32U                  IROp = 0x14AB // 5291
+	IopI32StoF64                  IROp = 0x14AC // 5292
+	IopI64StoF64                  IROp = 0x14AD // 5293
+	IopI64UtoF64                  IROp = 0x14AE // 5294
+	IopI64UtoF32                  IROp = 0x14AF // 5295
+	IopI32UtoF32                  IROp = 0x14B0 // 5296
+	IopI32UtoF64                  IROp = 0x14B1 // 5297
+	IopF32toI32S                  IROp = 0x14B2 // 5298
+	IopF32toI64S                  IROp = 0x14B3 // 5299
+	IopF32toI32U                  IROp = 0x14B4 // 5300
+	IopF32toI64U                  IROp = 0x14B5 // 5301
+	IopI32StoF32                  IROp = 0x14B6 // 5302
+	IopI64StoF32                  IROp = 0x14B7 // 5303
+	IopF32toF64                   IROp = 0x14B8 // 5304
+	IopF64toF32                   IROp = 0x14B9 // 5305
+	IopReinterpF64asI64           IROp = 0x14BA // 5306
+	IopReinterpI64asF64           IROp = 0x14BB // 5307
+	IopReinterpF32asI32           IROp = 0x14BC // 5308
+	IopReinterpI32asF32           IROp = 0x14BD // 5309
+	IopF64HLtoF128                IROp = 0x14BE // 5310
+	IopF128HItoF64                IROp = 0x14BF // 5311
+	IopF128LOtoF64                IROp = 0x14C0 // 5312
+	IopAddF128                    IROp = 0x14C1 // 5313
+	IopSubF128                    IROp = 0x14C2 // 5314
+	IopMulF128                    IROp = 0x14C3 // 5315
+	IopDivF128                    IROp = 0x14C4 // 5316
+	IopMAddF128                   IROp = 0x14C5 // (A * B) + C
+	IopMSubF128                   IROp = 0x14C6 // (A * B) - C
+	IopNegMAddF128                IROp = 0x14C7 // -((A * B) + C)
+	IopNegMSubF128                IROp = 0x14C8 // -((A * B) - C)
+	IopNegF128                    IROp = 0x14C9 // 5321
+	IopAbsF128                    IROp = 0x14CA // 5322
+	IopSqrtF128                   IROp = 0x14CB // 5323
+	IopI32StoF128                 IROp = 0x14CC // 5324
+	IopI64StoF128                 IROp = 0x14CD // 5325
+	IopI32UtoF128                 IROp = 0x14CE // 5326
+	IopI64UtoF128                 IROp = 0x14CF // 5327
+	IopF32toF128                  IROp = 0x14D0 // 5328
+	IopF64toF128                  IROp = 0x14D1 // 5329
+	IopF128toI32S                 IROp = 0x14D2 // 5330
+	IopF128toI64S                 IROp = 0x14D3 // 5331
+	IopF128toI32U                 IROp = 0x14D4 // 5332
+	IopF128toI64U                 IROp = 0x14D5 // 5333
+	IopF128toI128S                IROp = 0x14D6 // 5334
+	IopF128toF64                  IROp = 0x14D7 // 5335
+	IopF128toF32                  IROp = 0x14D8 // 5336
+	IopRndF128                    IROp = 0x14D9 // 5337
+	IopTruncF128toI32S            IROp = 0x14DA // 5338
+	IopTruncF128toI32U            IROp = 0x14DB // 5339
+	IopTruncF128toI64U            IROp = 0x14DC // 5340
+	IopTruncF128toI64S            IROp = 0x14DD // 5341
+	IopAtanF64                    IROp = 0x14DE // 5342
+	IopYl2xF64                    IROp = 0x14DF // 5343
+	IopYl2xp1F64                  IROp = 0x14E0 // 5344
+	IopPRemF64                    IROp = 0x14E1 // 5345
+	IopPRemC3210F64               IROp = 0x14E2 // 5346
+	IopPRem1F64                   IROp = 0x14E3 // 5347
+	IopPRem1C3210F64              IROp = 0x14E4 // 5348
+	IopScaleF64                   IROp = 0x14E5 // 5349
+	IopSinF64                     IROp = 0x14E6 // 5350
+	IopCosF64                     IROp = 0x14E7 // 5351
+	IopTanF64                     IROp = 0x14E8 // 5352
+	Iop2xm1F64                    IROp = 0x14E9 // 5353
+	IopRoundF128toInt             IROp = 0x14EA // 5354
+	IopRoundF64toInt              IROp = 0x14EB // 5355
+	IopRoundF32toInt              IROp = 0x14EC // 5356
+	IopMAddF32                    IROp = 0x14ED // 5357
+	IopMSubF32                    IROp = 0x14EE // 5358
+	IopMAddF64                    IROp = 0x14EF // 5359
+	IopMSubF64                    IROp = 0x14F0 // 5360
+	IopMAddF64r32                 IROp = 0x14F1 // 5361
+	IopMSubF64r32                 IROp = 0x14F2 // 5362
+	IopRSqrtEst5GoodF64           IROp = 0x14F3 // 5363
+	IopRoundF64toF64NEAREST       IROp = 0x14F4 // 5364
+	IopRoundF64toF64NegINF        IROp = 0x14F5 // 5365
+	IopRoundF64toF64PosINF        IROp = 0x14F6 // 5366
+	IopRoundF64toF64ZERO          IROp = 0x14F7 // 5367
+	IopTruncF64asF32              IROp = 0x14F8 // 5368
+	IopRoundF64toF32              IROp = 0x14F9 // 5369
+	IopRecpExpF64                 IROp = 0x14FA // 5370
+	IopRecpExpF32                 IROp = 0x14FB // 5371
+	IopMaxNumF64                  IROp = 0x14FC // 5372
+	IopMinNumF64                  IROp = 0x14FD // 5373
+	IopMaxNumF32                  IROp = 0x14FE // 5374
+	IopMinNumF32                  IROp = 0x14FF // 5375
+	IopF16toF64                   IROp = 0x1500 // 5376
+	IopF64toF16                   IROp = 0x1501 // 5377
+	IopF16toF32                   IROp = 0x1502 // 5378
+	IopF32toF16                   IROp = 0x1503 // 5379
+	IopQAdd32S                    IROp = 0x1504 // 5380
+	IopQSub32S                    IROp = 0x1505 // 5381
+	IopAdd16x2                    IROp = 0x1506 // 5382
+	IopSub16x2                    IROp = 0x1507 // 5383
+	IopQAdd16Sx2                  IROp = 0x1508 // 5384
+	IopQAdd16Ux2                  IROp = 0x1509 // 5385
+	IopQSub16Sx2                  IROp = 0x150A // 5386
+	IopQSub16Ux2                  IROp = 0x150B // 5387
+	IopHAdd16Ux2                  IROp = 0x150C // 5388
+	IopHAdd16Sx2                  IROp = 0x150D // 5389
+	IopHSub16Ux2                  IROp = 0x150E // 5390
+	IopHSub16Sx2                  IROp = 0x150F // 5391
+	IopAdd8x4                     IROp = 0x1510 // 5392
+	IopSub8x4                     IROp = 0x1511 // 5393
+	IopQAdd8Sx4                   IROp = 0x1512 // 5394
+	IopQAdd8Ux4                   IROp = 0x1513 // 5395
+	IopQSub8Sx4                   IROp = 0x1514 // 5396
+	IopQSub8Ux4                   IROp = 0x1515 // 5397
+	IopHAdd8Ux4                   IROp = 0x1516 // 5398
+	IopHAdd8Sx4                   IROp = 0x1517 // 5399
+	IopHSub8Ux4                   IROp = 0x1518 // 5400
+	IopHSub8Sx4                   IROp = 0x1519 // 5401
+	IopSad8Ux4                    IROp = 0x151A // 5402
+	IopCmpNEZ16x2                 IROp = 0x151B // 5403
+	IopCmpNEZ8x4                  IROp = 0x151C // 5404
+	IopI32UtoFx2                  IROp = 0x151D // 5405
+	IopI32StoFx2                  IROp = 0x151E // 5406
+	IopFtoI32Ux2RZ                IROp = 0x151F // 5407
+	IopFtoI32Sx2RZ                IROp = 0x1520 // 5408
+	IopF32ToFixed32Ux2RZ          IROp = 0x1521 // 5409
+	IopF32ToFixed32Sx2RZ          IROp = 0x1522 // 5410
+	IopFixed32UToF32x2RN          IROp = 0x1523 // 5411
+	IopFixed32SToF32x2RN          IROp = 0x1524 // 5412
+	IopMax32Fx2                   IROp = 0x1525 // 5413
+	IopMin32Fx2                   IROp = 0x1526 // 5414
+	IopPwMax32Fx2                 IROp = 0x1527 // 5415
+	IopPwMin32Fx2                 IROp = 0x1528 // 5416
+	IopCmpEQ32Fx2                 IROp = 0x1529 // 5417
+	IopCmpGT32Fx2                 IROp = 0x152A // 5418
+	IopCmpGE32Fx2                 IROp = 0x152B // 5419
+	IopRecipEst32Fx2              IROp = 0x152C // 5420
+	IopRecipStep32Fx2             IROp = 0x152D // 5421
+	IopRSqrtEst32Fx2              IROp = 0x152E // 5422
+	IopRSqrtStep32Fx2             IROp = 0x152F // 5423
+	IopNeg32Fx2                   IROp = 0x1530 // 5424
+	IopAbs32Fx2                   IROp = 0x1531 // 5425
+	IopCmpNEZ8x8                  IROp = 0x1532 // 5426
+	IopCmpNEZ16x4                 IROp = 0x1533 // 5427
+	IopCmpNEZ32x2                 IROp = 0x1534 // 5428
+	IopAdd8x8                     IROp = 0x1535 // 5429
+	IopAdd16x4                    IROp = 0x1536 // 5430
+	IopAdd32x2                    IROp = 0x1537 // 5431
+	IopQAdd8Ux8                   IROp = 0x1538 // 5432
+	IopQAdd16Ux4                  IROp = 0x1539 // 5433
+	IopQAdd32Ux2                  IROp = 0x153A // 5434
+	IopQAdd64Ux1                  IROp = 0x153B // 5435
+	IopQAdd8Sx8                   IROp = 0x153C // 5436
+	IopQAdd16Sx4                  IROp = 0x153D // 5437
+	IopQAdd32Sx2                  IROp = 0x153E // 5438
+	IopQAdd64Sx1                  IROp = 0x153F // 5439
+	IopPwAdd8x8                   IROp = 0x1540 // 5440
+	IopPwAdd16x4                  IROp = 0x1541 // 5441
+	IopPwAdd32x2                  IROp = 0x1542 // 5442
+	IopPwMax8Sx8                  IROp = 0x1543 // 5443
+	IopPwMax16Sx4                 IROp = 0x1544 // 5444
+	IopPwMax32Sx2                 IROp = 0x1545 // 5445
+	IopPwMax8Ux8                  IROp = 0x1546 // 5446
+	IopPwMax16Ux4                 IROp = 0x1547 // 5447
+	IopPwMax32Ux2                 IROp = 0x1548 // 5448
+	IopPwMin8Sx8                  IROp = 0x1549 // 5449
+	IopPwMin16Sx4                 IROp = 0x154A // 5450
+	IopPwMin32Sx2                 IROp = 0x154B // 5451
+	IopPwMin8Ux8                  IROp = 0x154C // 5452
+	IopPwMin16Ux4                 IROp = 0x154D // 5453
+	IopPwMin32Ux2                 IROp = 0x154E // 5454
+	IopPwAddL8Ux8                 IROp = 0x154F // 5455
+	IopPwAddL16Ux4                IROp = 0x1550 // 5456
+	IopPwAddL32Ux2                IROp = 0x1551 // 5457
+	IopPwAddL8Sx8                 IROp = 0x1552 // 5458
+	IopPwAddL16Sx4                IROp = 0x1553 // 5459
+	IopPwAddL32Sx2                IROp = 0x1554 // 5460
+	IopSub8x8                     IROp = 0x1555 // 5461
+	IopSub16x4                    IROp = 0x1556 // 5462
+	IopSub32x2                    IROp = 0x1557 // 5463
+	IopQSub8Ux8                   IROp = 0x1558 // 5464
+	IopQSub16Ux4                  IROp = 0x1559 // 5465
+	IopQSub32Ux2                  IROp = 0x155A // 5466
+	IopQSub64Ux1                  IROp = 0x155B // 5467
+	IopQSub8Sx8                   IROp = 0x155C // 5468
+	IopQSub16Sx4                  IROp = 0x155D // 5469
+	IopQSub32Sx2                  IROp = 0x155E // 5470
+	IopQSub64Sx1                  IROp = 0x155F // 5471
+	IopAbs8x8                     IROp = 0x1560 // 5472
+	IopAbs16x4                    IROp = 0x1561 // 5473
+	IopAbs32x2                    IROp = 0x1562 // 5474
+	IopMul8x8                     IROp = 0x1563 // 5475
+	IopMul16x4                    IROp = 0x1564 // 5476
+	IopMul32x2                    IROp = 0x1565 // 5477
+	IopMul32Fx2                   IROp = 0x1566 // 5478
+	IopMulHi16Ux4                 IROp = 0x1567 // 5479
+	IopMulHi16Sx4                 IROp = 0x1568 // 5480
+	IopPolynomialMul8x8           IROp = 0x1569 // 5481
+	IopQDMulHi16Sx4               IROp = 0x156A // 5482
+	IopQDMulHi32Sx2               IROp = 0x156B // 5483
+	IopQRDMulHi16Sx4              IROp = 0x156C // 5484
+	IopQRDMulHi32Sx2              IROp = 0x156D // 5485
+	IopAvg8Ux8                    IROp = 0x156E // 5486
+	IopAvg16Ux4                   IROp = 0x156F // 5487
+	IopMax8Sx8                    IROp = 0x1570 // 5488
+	IopMax16Sx4                   IROp = 0x1571 // 5489
+	IopMax32Sx2                   IROp = 0x1572 // 5490
+	IopMax8Ux8                    IROp = 0x1573 // 5491
+	IopMax16Ux4                   IROp = 0x1574 // 5492
+	IopMax32Ux2                   IROp = 0x1575 // 5493
+	IopMin8Sx8                    IROp = 0x1576 // 5494
+	IopMin16Sx4                   IROp = 0x1577 // 5495
+	IopMin32Sx2                   IROp = 0x1578 // 5496
+	IopMin8Ux8                    IROp = 0x1579 // 5497
+	IopMin16Ux4                   IROp = 0x157A // 5498
+	IopMin32Ux2                   IROp = 0x157B // 5499
+	IopCmpEQ8x8                   IROp = 0x157C // 5500
+	IopCmpEQ16x4                  IROp = 0x157D // 5501
+	IopCmpEQ32x2                  IROp = 0x157E // 5502
+	IopCmpGT8Ux8                  IROp = 0x157F // 5503
+	IopCmpGT16Ux4                 IROp = 0x1580 // 5504
+	IopCmpGT32Ux2                 IROp = 0x1581 // 5505
+	IopCmpGT8Sx8                  IROp = 0x1582 // 5506
+	IopCmpGT16Sx4                 IROp = 0x1583 // 5507
+	IopCmpGT32Sx2                 IROp = 0x1584 // 5508
+	IopCnt8x8                     IROp = 0x1585 // 5509
+	IopClz8x8                     IROp = 0x1586 // 5510
+	IopClz16x4                    IROp = 0x1587 // 5511
+	IopClz32x2                    IROp = 0x1588 // 5512
+	IopCls8x8                     IROp = 0x1589 // 5513
+	IopCls16x4                    IROp = 0x158A // 5514
+	IopCls32x2                    IROp = 0x158B // 5515
+	IopClz64x2                    IROp = 0x158C // 5516
+	IopCtz8x16                    IROp = 0x158D // 5517
+	IopCtz16x8                    IROp = 0x158E // 5518
+	IopCtz32x4                    IROp = 0x158F // 5519
+	IopCtz64x2                    IROp = 0x1590 // 5520
+	IopShl8x8                     IROp = 0x1591 // 5521
+	IopShl16x4                    IROp = 0x1592 // 5522
+	IopShl32x2                    IROp = 0x1593 // 5523
+	IopShr8x8                     IROp = 0x1594 // 5524
+	IopShr16x4                    IROp = 0x1595 // 5525
+	IopShr32x2                    IROp = 0x1596 // 5526
+	IopSar8x8                     IROp = 0x1597 // 5527
+	IopSar16x4                    IROp = 0x1598 // 5528
+	IopSar32x2                    IROp = 0x1599 // 5529
+	IopSal8x8                     IROp = 0x159A // 5530
+	IopSal16x4                    IROp = 0x159B // 5531
+	IopSal32x2                    IROp = 0x159C // 5532
+	IopSal64x1                    IROp = 0x159D // 5533
+	IopShlN8x8                    IROp = 0x159E // 5534
+	IopShlN16x4                   IROp = 0x159F // 5535
+	IopShlN32x2                   IROp = 0x15A0 // 5536
+	IopShrN8x8                    IROp = 0x15A1 // 5537
+	IopShrN16x4                   IROp = 0x15A2 // 5538
+	IopShrN32x2                   IROp = 0x15A3 // 5539
+	IopSarN8x8                    IROp = 0x15A4 // 5540
+	IopSarN16x4                   IROp = 0x15A5 // 5541
+	IopSarN32x2                   IROp = 0x15A6 // 5542
+	IopQShl8x8                    IROp = 0x15A7 // 5543
+	IopQShl16x4                   IROp = 0x15A8 // 5544
+	IopQShl32x2                   IROp = 0x15A9 // 5545
+	IopQShl64x1                   IROp = 0x15AA // 5546
+	IopQSal8x8                    IROp = 0x15AB // 5547
+	IopQSal16x4                   IROp = 0x15AC // 5548
+	IopQSal32x2                   IROp = 0x15AD // 5549
+	IopQSal64x1                   IROp = 0x15AE // 5550
+	IopQShlNsatSU8x8              IROp = 0x15AF // 5551
+	IopQShlNsatSU16x4             IROp = 0x15B0 // 5552
+	IopQShlNsatSU32x2             IROp = 0x15B1 // 5553
+	IopQShlNsatSU64x1             IROp = 0x15B2 // 5554
+	IopQShlNsatUU8x8              IROp = 0x15B3 // 5555
+	IopQShlNsatUU16x4             IROp = 0x15B4 // 5556
+	IopQShlNsatUU32x2             IROp = 0x15B5 // 5557
+	IopQShlNsatUU64x1             IROp = 0x15B6 // 5558
+	IopQShlNsatSS8x8              IROp = 0x15B7 // 5559
+	IopQShlNsatSS16x4             IROp = 0x15B8 // 5560
+	IopQShlNsatSS32x2             IROp = 0x15B9 // 5561
+	IopQShlNsatSS64x1             IROp = 0x15BA // 5562
+	IopQNarrowBin16Sto8Ux8        IROp = 0x15BB // 5563
+	IopQNarrowBin16Sto8Sx8        IROp = 0x15BC // 5564
+	IopQNarrowBin32Sto16Sx4       IROp = 0x15BD // 5565
+	IopNarrowBin16to8x8           IROp = 0x15BE // 5566
+	IopNarrowBin32to16x4          IROp = 0x15BF // 5567
+	IopInterleaveHI8x8            IROp = 0x15C0 // 5568
+	IopInterleaveHI16x4           IROp = 0x15C1 // 5569
+	IopInterleaveHI32x2           IROp = 0x15C2 // 5570
+	IopInterleaveLO8x8            IROp = 0x15C3 // 5571
+	IopInterleaveLO16x4           IROp = 0x15C4 // 5572
+	IopInterleaveLO32x2           IROp = 0x15C5 // 5573
+	IopInterleaveOddLanes8x8      IROp = 0x15C6 // 5574
+	IopInterleaveEvenLanes8x8     IROp = 0x15C7 // 5575
+	IopInterleaveOddLanes16x4     IROp = 0x15C8 // 5576
+	IopInterleaveEvenLanes16x4    IROp = 0x15C9 // 5577
+	IopCatOddLanes8x8             IROp = 0x15CA // 5578
+	IopCatOddLanes16x4            IROp = 0x15CB // 5579
+	IopCatEvenLanes8x8            IROp = 0x15CC // 5580
+	IopCatEvenLanes16x4           IROp = 0x15CD // 5581
+	IopGetElem8x8                 IROp = 0x15CE // 5582
+	IopGetElem16x4                IROp = 0x15CF // 5583
+	IopGetElem32x2                IROp = 0x15D0 // 5584
+	IopSetElem8x8                 IROp = 0x15D1 // 5585
+	IopSetElem16x4                IROp = 0x15D2 // 5586
+	IopSetElem32x2                IROp = 0x15D3 // 5587
+	IopDup8x8                     IROp = 0x15D4 // 5588
+	IopDup16x4                    IROp = 0x15D5 // 5589
+	IopDup32x2                    IROp = 0x15D6 // 5590
+	IopSlice64                    IROp = 0x15D7 // (I64, I64, I8) -> I64
+	IopReverse8sIn16x4            IROp = 0x15D8 // 5592
+	IopReverse8sIn32x2            IROp = 0x15D9 // 5593
+	IopReverse16sIn32x2           IROp = 0x15DA // 5594
+	IopReverse8sIn64x1            IROp = 0x15DB // 5595
+	IopReverse16sIn64x1           IROp = 0x15DC // 5596
+	IopReverse32sIn64x1           IROp = 0x15DD // 5597
+	IopPerm8x8                    IROp = 0x15DE // 5598
+	IopGetMSBs8x8                 IROp = 0x15DF // 5599
+	IopRecipEst32Ux2              IROp = 0x15E0 // 5600
+	IopRSqrtEst32Ux2              IROp = 0x15E1 // 5601
+	IopAddD64                     IROp = 0x15E2 // 5602
+	IopSubD64                     IROp = 0x15E3 // 5603
+	IopMulD64                     IROp = 0x15E4 // 5604
+	IopDivD64                     IROp = 0x15E5 // 5605
+	IopAddD128                    IROp = 0x15E6 // 5606
+	IopSubD128                    IROp = 0x15E7 // 5607
+	IopMulD128                    IROp = 0x15E8 // 5608
+	IopDivD128                    IROp = 0x15E9 // 5609
+	IopShlD64                     IROp = 0x15EA // 5610
+	IopShrD64                     IROp = 0x15EB // 5611
+	IopShlD128                    IROp = 0x15EC // 5612
+	IopShrD128                    IROp = 0x15ED // 5613
+	IopD32toD64                   IROp = 0x15EE // 5614
+	IopD64toD128                  IROp = 0x15EF // 5615
+	IopI32StoD128                 IROp = 0x15F0 // 5616
+	IopI32UtoD128                 IROp = 0x15F1 // 5617
+	IopI64StoD128                 IROp = 0x15F2 // 5618
+	IopI64UtoD128                 IROp = 0x15F3 // 5619
+	IopD64toD32                   IROp = 0x15F4 // 5620
+	IopD128toD64                  IROp = 0x15F5 // 5621
+	IopI32StoD64                  IROp = 0x15F6 // 5622
+	IopI32UtoD64                  IROp = 0x15F7 // 5623
+	IopI64StoD64                  IROp = 0x15F8 // 5624
+	IopI64UtoD64                  IROp = 0x15F9 // 5625
+	IopD64toI32S                  IROp = 0x15FA // 5626
+	IopD64toI32U                  IROp = 0x15FB // 5627
+	IopD64toI64S                  IROp = 0x15FC // 5628
+	IopD64toI64U                  IROp = 0x15FD // 5629
+	IopD128toI32S                 IROp = 0x15FE // 5630
+	IopD128toI32U                 IROp = 0x15FF // 5631
+	IopD128toI64S                 IROp = 0x1600 // 5632
+	IopD128toI64U                 IROp = 0x1601 // 5633
+	IopF32toD32                   IROp = 0x1602 // 5634
+	IopF32toD64                   IROp = 0x1603 // 5635
+	IopF32toD128                  IROp = 0x1604 // 5636
+	IopF64toD32                   IROp = 0x1605 // 5637
+	IopF64toD64                   IROp = 0x1606 // 5638
+	IopF64toD128                  IROp = 0x1607 // 5639
+	IopF128toD32                  IROp = 0x1608 // 5640
+	IopF128toD64                  IROp = 0x1609 // 5641
+	IopF128toD128                 IROp = 0x160A // 5642
+	IopD32toF32                   IROp = 0x160B // 5643
+	IopD32toF64                   IROp = 0x160C // 5644
+	IopD32toF128                  IROp = 0x160D // 5645
+	IopD64toF32                   IROp = 0x160E // 5646
+	IopD64toF64                   IROp = 0x160F // 5647
+	IopD64toF128                  IROp = 0x1610 // 5648
+	IopD128toF32                  IROp = 0x1611 // 5649
+	IopD128toF64                  IROp = 0x1612 // 5650
+	IopD128toF128                 IROp = 0x1613 // 5651
+	IopRoundD64toInt              IROp = 0x1614 // 5652
+	IopRoundD128toInt             IROp = 0x1615 // 5653
+	IopCmpD64                     IROp = 0x1616 // 5654
+	IopCmpD128                    IROp = 0x1617 // 5655
+	IopCmpExpD64                  IROp = 0x1618 // 5656
+	IopCmpExpD128                 IROp = 0x1619 // 5657
+	IopQuantizeD64                IROp = 0x161A // 5658
+	IopQuantizeD128               IROp = 0x161B // 5659
+	IopSignificanceRoundD64       IROp = 0x161C // 5660
+	IopSignificanceRoundD128      IROp = 0x161D // 5661
+	IopExtractExpD64              IROp = 0x161E // 5662
+	IopExtractExpD128             IROp = 0x161F // 5663
+	IopExtractSigD64              IROp = 0x1620 // 5664
+	IopExtractSigD128             IROp = 0x1621 // 5665
+	IopInsertExpD64               IROp = 0x1622 // 5666
+	IopInsertExpD128              IROp = 0x1623 // 5667
+	IopD64HLtoD128                IROp = 0x1624 // 5668
+	IopD128HItoD64                IROp = 0x1625 // 5669
+	IopD128LOtoD64                IROp = 0x1626 // 5670
+	IopDPBtoBCD                   IROp = 0x1627 // 5671
+	IopBCDtoDPB                   IROp = 0x1628 // 5672
+	IopBCDAdd                     IROp = 0x1629 // 5673
+	IopBCDSub                     IROp = 0x162A // 5674
+	IopI128StoBCD128              IROp = 0x162B // 5675
+	IopBCD128toI128S              IROp = 0x162C // 5676
+	IopReinterpI64asD64           IROp = 0x162D // 5677
+	IopReinterpD64asI64           IROp = 0x162E // 5678
+	IopAdd32Fx4                   IROp = 0x162F // 5679
+	IopSub32Fx4                   IROp = 0x1630 // 5680
+	IopMul32Fx4                   IROp = 0x1631 // 5681
+	IopDiv32Fx4                   IROp = 0x1632 // 5682
+	IopMax32Fx4                   IROp = 0x1633 // 5683
+	IopMin32Fx4                   IROp = 0x1634 // 5684
+	IopAdd32Fx2                   IROp = 0x1635 // 5685
+	IopSub32Fx2                   IROp = 0x1636 // 5686
+	IopCmpEQ32Fx4                 IROp = 0x1637 // 5687
+	IopCmpLT32Fx4                 IROp = 0x1638 // 5688
+	IopCmpLE32Fx4                 IROp = 0x1639 // 5689
+	IopCmpUN32Fx4                 IROp = 0x163A // 5690
+	IopCmpGT32Fx4                 IROp = 0x163B // 5691
+	IopCmpGE32Fx4                 IROp = 0x163C // 5692
+	IopPwMax32Fx4                 IROp = 0x163D // 5693
+	IopPwMin32Fx4                 IROp = 0x163E // 5694
+	IopAbs32Fx4                   IROp = 0x163F // 5695
+	IopNeg32Fx4                   IROp = 0x1640 // 5696
+	IopSqrt32Fx4                  IROp = 0x1641 // 5697
+	IopRecipEst32Fx4              IROp = 0x1642 // 5698
+	IopRecipStep32Fx4             IROp = 0x1643 // 5699
+	IopRSqrtEst32Fx4              IROp = 0x1644 // 5700
+	IopRSqrtStep32Fx4             IROp = 0x1645 // 5701
+	IopI32UtoFx4                  IROp = 0x1646 // 5702
+	IopI32StoFx4                  IROp = 0x1647 // 5703
+	IopFtoI32Ux4RZ                IROp = 0x1648 // 5704
+	IopFtoI32Sx4RZ                IROp = 0x1649 // 5705
+	IopQFtoI32Ux4RZ               IROp = 0x164A // 5706
+	IopQFtoI32Sx4RZ               IROp = 0x164B // 5707
+	IopRoundF32x4RM               IROp = 0x164C // 5708
+	IopRoundF32x4RP               IROp = 0x164D // 5709
+	IopRoundF32x4RN               IROp = 0x164E // 5710
+	IopRoundF32x4RZ               IROp = 0x164F // 5711
+	IopF32ToFixed32Ux4RZ          IROp = 0x1650 // 5712
+	IopF32ToFixed32Sx4RZ          IROp = 0x1651 // 5713
+	IopFixed32UToF32x4RN          IROp = 0x1652 // 5714
+	IopFixed32SToF32x4RN          IROp = 0x1653 // 5715
+	IopF32toF16x4                 IROp = 0x1654 // 5716
+	IopF16toF32x4                 IROp = 0x1655 // 5717
+	IopF64toF16x2                 IROp = 0x1656 // 5718
+	IopF16toF64x2                 IROp = 0x1657 // 5719
+	IopAdd32F0x4                  IROp = 0x1658 // 5720
+	IopSub32F0x4                  IROp = 0x1659 // 5721
+	IopMul32F0x4                  IROp = 0x165A // 5722
+	IopDiv32F0x4                  IROp = 0x165B // 5723
+	IopMax32F0x4                  IROp = 0x165C // 5724
+	IopMin32F0x4                  IROp = 0x165D // 5725
+	IopCmpEQ32F0x4                IROp = 0x165E // 5726
+	IopCmpLT32F0x4                IROp = 0x165F // 5727
+	IopCmpLE32F0x4                IROp = 0x1660 // 5728
+	IopCmpUN32F0x4                IROp = 0x1661 // 5729
+	IopRecipEst32F0x4             IROp = 0x1662 // 5730
+	IopSqrt32F0x4                 IROp = 0x1663 // 5731
+	IopRSqrtEst32F0x4             IROp = 0x1664 // 5732
+	IopAdd64Fx2                   IROp = 0x1665 // 5733
+	IopSub64Fx2                   IROp = 0x1666 // 5734
+	IopMul64Fx2                   IROp = 0x1667 // 5735
+	IopDiv64Fx2                   IROp = 0x1668 // 5736
+	IopMax64Fx2                   IROp = 0x1669 // 5737
+	IopMin64Fx2                   IROp = 0x166A // 5738
+	IopCmpEQ64Fx2                 IROp = 0x166B // 5739
+	IopCmpLT64Fx2                 IROp = 0x166C // 5740
+	IopCmpLE64Fx2                 IROp = 0x166D // 5741
+	IopCmpUN64Fx2                 IROp = 0x166E // 5742
+	IopAbs64Fx2                   IROp = 0x166F // 5743
+	IopNeg64Fx2                   IROp = 0x1670 // 5744
+	IopSqrt64Fx2                  IROp = 0x1671 // 5745
+	IopRecipEst64Fx2              IROp = 0x1672 // unary
+	IopRecipStep64Fx2             IROp = 0x1673 // binary
+	IopRSqrtEst64Fx2              IROp = 0x1674 // unary
+	IopRSqrtStep64Fx2             IROp = 0x1675 // binary
+	IopAdd64F0x2                  IROp = 0x1676 // 5750
+	IopSub64F0x2                  IROp = 0x1677 // 5751
+	IopMul64F0x2                  IROp = 0x1678 // 5752
+	IopDiv64F0x2                  IROp = 0x1679 // 5753
+	IopMax64F0x2                  IROp = 0x167A // 5754
+	IopMin64F0x2                  IROp = 0x167B // 5755
+	IopCmpEQ64F0x2                IROp = 0x167C // 5756
+	IopCmpLT64F0x2                IROp = 0x167D // 5757
+	IopCmpLE64F0x2                IROp = 0x167E // 5758
+	IopCmpUN64F0x2                IROp = 0x167F // 5759
+	IopSqrt64F0x2                 IROp = 0x1680 // 5760
+	IopV128to64                   IROp = 0x1681 // :: V128 -> I64, low half
+	IopV128HIto64                 IROp = 0x1682 // :: V128 -> I64, high half
+	Iop64HLtoV128                 IROp = 0x1683 // :: (I64,I64) -> V128
+	Iop64UtoV128                  IROp = 0x1684 // 5764
+	IopSetV128lo64                IROp = 0x1685 // 5765
+	IopZeroHI64ofV128             IROp = 0x1686 // :: V128 -> V128
+	IopZeroHI96ofV128             IROp = 0x1687 // :: V128 -> V128
+	IopZeroHI112ofV128            IROp = 0x1688 // :: V128 -> V128
+	IopZeroHI120ofV128            IROp = 0x1689 // :: V128 -> V128
+	Iop32UtoV128                  IROp = 0x168A // 5770
+	IopV128to32                   IROp = 0x168B // :: V128 -> I32, lowest lane
+	IopSetV128lo32                IROp = 0x168C // :: (V128,I32) -> V128
+	IopNotV128                    IROp = 0x168D // 5773
+	IopAndV128                    IROp = 0x168E // 5774
+	IopOrV128                     IROp = 0x168F // 5775
+	IopXorV128                    IROp = 0x1690 // 5776
+	IopShlV128                    IROp = 0x1691 // 5777
+	IopShrV128                    IROp = 0x1692 // 5778
+	IopSarV128                    IROp = 0x1693 // 5779
+	IopCmpNEZ8x16                 IROp = 0x1694 // 5780
+	IopCmpNEZ16x8                 IROp = 0x1695 // 5781
+	IopCmpNEZ32x4                 IROp = 0x1696 // 5782
+	IopCmpNEZ64x2                 IROp = 0x1697 // 5783
+	IopCmpNEZ128x1                IROp = 0x1698 // 5784
+	IopAdd8x16                    IROp = 0x1699 // 5785
+	IopAdd16x8                    IROp = 0x169A // 5786
+	IopAdd32x4                    IROp = 0x169B // 5787
+	IopAdd64x2                    IROp = 0x169C // 5788
+	IopAdd128x1                   IROp = 0x169D // 5789
+	IopQAdd8Ux16                  IROp = 0x169E // 5790
+	IopQAdd16Ux8                  IROp = 0x169F // 5791
+	IopQAdd32Ux4                  IROp = 0x16A0 // 5792
+	IopQAdd64Ux2                  IROp = 0x16A1 // 5793
+	IopQAdd8Sx16                  IROp = 0x16A2 // 5794
+	IopQAdd16Sx8                  IROp = 0x16A3 // 5795
+	IopQAdd32Sx4                  IROp = 0x16A4 // 5796
+	IopQAdd64Sx2                  IROp = 0x16A5 // 5797
+	IopQAddExtUSsatSS8x16         IROp = 0x16A6 // 5798
+	IopQAddExtUSsatSS16x8         IROp = 0x16A7 // 5799
+	IopQAddExtUSsatSS32x4         IROp = 0x16A8 // 5800
+	IopQAddExtUSsatSS64x2         IROp = 0x16A9 // 5801
+	IopQAddExtSUsatUU8x16         IROp = 0x16AA // 5802
+	IopQAddExtSUsatUU16x8         IROp = 0x16AB // 5803
+	IopQAddExtSUsatUU32x4         IROp = 0x16AC // 5804
+	IopQAddExtSUsatUU64x2         IROp = 0x16AD // 5805
+	IopSub8x16                    IROp = 0x16AE // 5806
+	IopSub16x8                    IROp = 0x16AF // 5807
+	IopSub32x4                    IROp = 0x16B0 // 5808
+	IopSub64x2                    IROp = 0x16B1 // 5809
+	IopSub128x1                   IROp = 0x16B2 // 5810
+	IopQSub8Ux16                  IROp = 0x16B3 // 5811
+	IopQSub16Ux8                  IROp = 0x16B4 // 5812
+	IopQSub32Ux4                  IROp = 0x16B5 // 5813
+	IopQSub64Ux2                  IROp = 0x16B6 // 5814
+	IopQSub8Sx16                  IROp = 0x16B7 // 5815
+	IopQSub16Sx8                  IROp = 0x16B8 // 5816
+	IopQSub32Sx4                  IROp = 0x16B9 // 5817
+	IopQSub64Sx2                  IROp = 0x16BA // 5818
+	IopMul8x16                    IROp = 0x16BB // 5819
+	IopMul16x8                    IROp = 0x16BC // 5820
+	IopMul32x4                    IROp = 0x16BD // 5821
+	IopMulHi8Ux16                 IROp = 0x16BE // 5822
+	IopMulHi16Ux8                 IROp = 0x16BF // 5823
+	IopMulHi32Ux4                 IROp = 0x16C0 // 5824
+	IopMulHi8Sx16                 IROp = 0x16C1 // 5825
+	IopMulHi16Sx8                 IROp = 0x16C2 // 5826
+	IopMulHi32Sx4                 IROp = 0x16C3 // 5827
+	IopMullEven8Ux16              IROp = 0x16C4 // 5828
+	IopMullEven16Ux8              IROp = 0x16C5 // 5829
+	IopMullEven32Ux4              IROp = 0x16C6 // 5830
+	IopMullEven8Sx16              IROp = 0x16C7 // 5831
+	IopMullEven16Sx8              IROp = 0x16C8 // 5832
+	IopMullEven32Sx4              IROp = 0x16C9 // 5833
+	IopMull8Ux8                   IROp = 0x16CA // 5834
+	IopMull8Sx8                   IROp = 0x16CB // 5835
+	IopMull16Ux4                  IROp = 0x16CC // 5836
+	IopMull16Sx4                  IROp = 0x16CD // 5837
+	IopMull32Ux2                  IROp = 0x16CE // 5838
+	IopMull32Sx2                  IROp = 0x16CF // 5839
+	IopQDMull16Sx4                IROp = 0x16D0 // 5840
+	IopQDMull32Sx2                IROp = 0x16D1 // 5841
+	IopQDMulHi16Sx8               IROp = 0x16D2 // 5842
+	IopQDMulHi32Sx4               IROp = 0x16D3 // 5843
+	IopQRDMulHi16Sx8              IROp = 0x16D4 // 5844
+	IopQRDMulHi32Sx4              IROp = 0x16D5 // 5845
+	IopPolynomialMul8x16          IROp = 0x16D6 // 5846
+	IopPolynomialMull8x8          IROp = 0x16D7 // 5847
+	IopPolynomialMulAdd8x16       IROp = 0x16D8 // 5848
+	IopPolynomialMulAdd16x8       IROp = 0x16D9 // 5849
+	IopPolynomialMulAdd32x4       IROp = 0x16DA // 5850
+	IopPolynomialMulAdd64x2       IROp = 0x16DB // 5851
+	IopPwAdd8x16                  IROp = 0x16DC // 5852
+	IopPwAdd16x8                  IROp = 0x16DD // 5853
+	IopPwAdd32x4                  IROp = 0x16DE // 5854
+	IopPwAdd32Fx2                 IROp = 0x16DF // 5855
+	IopPwAddL8Ux16                IROp = 0x16E0 // 5856
+	IopPwAddL16Ux8                IROp = 0x16E1 // 5857
+	IopPwAddL32Ux4                IROp = 0x16E2 // 5858
+	IopPwAddL64Ux2                IROp = 0x16E3 // 5859
+	IopPwAddL8Sx16                IROp = 0x16E4 // 5860
+	IopPwAddL16Sx8                IROp = 0x16E5 // 5861
+	IopPwAddL32Sx4                IROp = 0x16E6 // 5862
+	IopPwBitMtxXpose64x2          IROp = 0x16E7 // 5863
+	IopAbs8x16                    IROp = 0x16E8 // 5864
+	IopAbs16x8                    IROp = 0x16E9 // 5865
+	IopAbs32x4                    IROp = 0x16EA // 5866
+	IopAbs64x2                    IROp = 0x16EB // 5867
+	IopAvg8Ux16                   IROp = 0x16EC // 5868
+	IopAvg16Ux8                   IROp = 0x16ED // 5869
+	IopAvg32Ux4                   IROp = 0x16EE // 5870
+	IopAvg64Ux2                   IROp = 0x16EF // 5871
+	IopAvg8Sx16                   IROp = 0x16F0 // 5872
+	IopAvg16Sx8                   IROp = 0x16F1 // 5873
+	IopAvg32Sx4                   IROp = 0x16F2 // 5874
+	IopAvg64Sx2                   IROp = 0x16F3 // 5875
+	IopMax8Sx16                   IROp = 0x16F4 // 5876
+	IopMax16Sx8                   IROp = 0x16F5 // 5877
+	IopMax32Sx4                   IROp = 0x16F6 // 5878
+	IopMax64Sx2                   IROp = 0x16F7 // 5879
+	IopMax8Ux16                   IROp = 0x16F8 // 5880
+	IopMax16Ux8                   IROp = 0x16F9 // 5881
+	IopMax32Ux4                   IROp = 0x16FA // 5882
+	IopMax64Ux2                   IROp = 0x16FB // 5883
+	IopMin8Sx16                   IROp = 0x16FC // 5884
+	IopMin16Sx8                   IROp = 0x16FD // 5885
+	IopMin32Sx4                   IROp = 0x16FE // 5886
+	IopMin64Sx2                   IROp = 0x16FF // 5887
+	IopMin8Ux16                   IROp = 0x1700 // 5888
+	IopMin16Ux8                   IROp = 0x1701 // 5889
+	IopMin32Ux4                   IROp = 0x1702 // 5890
+	IopMin64Ux2                   IROp = 0x1703 // 5891
+	IopCmpEQ8x16                  IROp = 0x1704 // 5892
+	IopCmpEQ16x8                  IROp = 0x1705 // 5893
+	IopCmpEQ32x4                  IROp = 0x1706 // 5894
+	IopCmpEQ64x2                  IROp = 0x1707 // 5895
+	IopCmpGT8Sx16                 IROp = 0x1708 // 5896
+	IopCmpGT16Sx8                 IROp = 0x1709 // 5897
+	IopCmpGT32Sx4                 IROp = 0x170A // 5898
+	IopCmpGT64Sx2                 IROp = 0x170B // 5899
+	IopCmpGT8Ux16                 IROp = 0x170C // 5900
+	IopCmpGT16Ux8                 IROp = 0x170D // 5901
+	IopCmpGT32Ux4                 IROp = 0x170E // 5902
+	IopCmpGT64Ux2                 IROp = 0x170F // 5903
+	IopCnt8x16                    IROp = 0x1710 // 5904
+	IopClz8x16                    IROp = 0x1711 // 5905
+	IopClz16x8                    IROp = 0x1712 // 5906
+	IopClz32x4                    IROp = 0x1713 // 5907
+	IopCls8x16                    IROp = 0x1714 // 5908
+	IopCls16x8                    IROp = 0x1715 // 5909
+	IopCls32x4                    IROp = 0x1716 // 5910
+	IopShlN8x16                   IROp = 0x1717 // 5911
+	IopShlN16x8                   IROp = 0x1718 // 5912
+	IopShlN32x4                   IROp = 0x1719 // 5913
+	IopShlN64x2                   IROp = 0x171A // 5914
+	IopShrN8x16                   IROp = 0x171B // 5915
+	IopShrN16x8                   IROp = 0x171C // 5916
+	IopShrN32x4                   IROp = 0x171D // 5917
+	IopShrN64x2                   IROp = 0x171E // 5918
+	IopSarN8x16                   IROp = 0x171F // 5919
+	IopSarN16x8                   IROp = 0x1720 // 5920
+	IopSarN32x4                   IROp = 0x1721 // 5921
+	IopSarN64x2                   IROp = 0x1722 // 5922
+	IopShl8x16                    IROp = 0x1723 // 5923
+	IopShl16x8                    IROp = 0x1724 // 5924
+	IopShl32x4                    IROp = 0x1725 // 5925
+	IopShl64x2                    IROp = 0x1726 // 5926
+	IopShr8x16                    IROp = 0x1727 // 5927
+	IopShr16x8                    IROp = 0x1728 // 5928
+	IopShr32x4                    IROp = 0x1729 // 5929
+	IopShr64x2                    IROp = 0x172A // 5930
+	IopSar8x16                    IROp = 0x172B // 5931
+	IopSar16x8                    IROp = 0x172C // 5932
+	IopSar32x4                    IROp = 0x172D // 5933
+	IopSar64x2                    IROp = 0x172E // 5934
+	IopSal8x16                    IROp = 0x172F // 5935
+	IopSal16x8                    IROp = 0x1730 // 5936
+	IopSal32x4                    IROp = 0x1731 // 5937
+	IopSal64x2                    IROp = 0x1732 // 5938
+	IopRol8x16                    IROp = 0x1733 // 5939
+	IopRol16x8                    IROp = 0x1734 // 5940
+	IopRol32x4                    IROp = 0x1735 // 5941
+	IopRol64x2                    IROp = 0x1736 // 5942
+	IopQShl8x16                   IROp = 0x1737 // 5943
+	IopQShl16x8                   IROp = 0x1738 // 5944
+	IopQShl32x4                   IROp = 0x1739 // 5945
+	IopQShl64x2                   IROp = 0x173A // 5946
+	IopQSal8x16                   IROp = 0x173B // 5947
+	IopQSal16x8                   IROp = 0x173C // 5948
+	IopQSal32x4                   IROp = 0x173D // 5949
+	IopQSal64x2                   IROp = 0x173E // 5950
+	IopQShlNsatSU8x16             IROp = 0x173F // 5951
+	IopQShlNsatSU16x8             IROp = 0x1740 // 5952
+	IopQShlNsatSU32x4             IROp = 0x1741 // 5953
+	IopQShlNsatSU64x2             IROp = 0x1742 // 5954
+	IopQShlNsatUU8x16             IROp = 0x1743 // 5955
+	IopQShlNsatUU16x8             IROp = 0x1744 // 5956
+	IopQShlNsatUU32x4             IROp = 0x1745 // 5957
+	IopQShlNsatUU64x2             IROp = 0x1746 // 5958
+	IopQShlNsatSS8x16             IROp = 0x1747 // 5959
+	IopQShlNsatSS16x8             IROp = 0x1748 // 5960
+	IopQShlNsatSS32x4             IROp = 0x1749 // 5961
+	IopQShlNsatSS64x2             IROp = 0x174A // 5962
+	IopQandUQsh8x16               IROp = 0x174B // 5963
+	IopQandUQsh16x8               IROp = 0x174C // 5964
+	IopQandUQsh32x4               IROp = 0x174D // 5965
+	IopQandUQsh64x2               IROp = 0x174E // 5966
+	IopQandSQsh8x16               IROp = 0x174F // 5967
+	IopQandSQsh16x8               IROp = 0x1750 // 5968
+	IopQandSQsh32x4               IROp = 0x1751 // 5969
+	IopQandSQsh64x2               IROp = 0x1752 // 5970
+	IopQandUQRsh8x16              IROp = 0x1753 // 5971
+	IopQandUQRsh16x8              IROp = 0x1754 // 5972
+	IopQandUQRsh32x4              IROp = 0x1755 // 5973
+	IopQandUQRsh64x2              IROp = 0x1756 // 5974
+	IopQandSQRsh8x16              IROp = 0x1757 // 5975
+	IopQandSQRsh16x8              IROp = 0x1758 // 5976
+	IopQandSQRsh32x4              IROp = 0x1759 // 5977
+	IopQandSQRsh64x2              IROp = 0x175A // 5978
+	IopSh8Sx16                    IROp = 0x175B // 5979
+	IopSh16Sx8                    IROp = 0x175C // 5980
+	IopSh32Sx4                    IROp = 0x175D // 5981
+	IopSh64Sx2                    IROp = 0x175E // 5982
+	IopSh8Ux16                    IROp = 0x175F // 5983
+	IopSh16Ux8                    IROp = 0x1760 // 5984
+	IopSh32Ux4                    IROp = 0x1761 // 5985
+	IopSh64Ux2                    IROp = 0x1762 // 5986
+	IopRsh8Sx16                   IROp = 0x1763 // 5987
+	IopRsh16Sx8                   IROp = 0x1764 // 5988
+	IopRsh32Sx4                   IROp = 0x1765 // 5989
+	IopRsh64Sx2                   IROp = 0x1766 // 5990
+	IopRsh8Ux16                   IROp = 0x1767 // 5991
+	IopRsh16Ux8                   IROp = 0x1768 // 5992
+	IopRsh32Ux4                   IROp = 0x1769 // 5993
+	IopRsh64Ux2                   IROp = 0x176A // 5994
+	IopQandQShrNnarrow16Uto8Ux8   IROp = 0x176B // 5995
+	IopQandQShrNnarrow32Uto16Ux4  IROp = 0x176C // 5996
+	IopQandQShrNnarrow64Uto32Ux2  IROp = 0x176D // 5997
+	IopQandQSarNnarrow16Sto8Sx8   IROp = 0x176E // 5998
+	IopQandQSarNnarrow32Sto16Sx4  IROp = 0x176F // 5999
+	IopQandQSarNnarrow64Sto32Sx2  IROp = 0x1770 // 6000
+	IopQandQSarNnarrow16Sto8Ux8   IROp = 0x1771 // 6001
+	IopQandQSarNnarrow32Sto16Ux4  IROp = 0x1772 // 6002
+	IopQandQSarNnarrow64Sto32Ux2  IROp = 0x1773 // 6003
+	IopQandQRShrNnarrow16Uto8Ux8  IROp = 0x1774 // 6004
+	IopQandQRShrNnarrow32Uto16Ux4 IROp = 0x1775 // 6005
+	IopQandQRShrNnarrow64Uto32Ux2 IROp = 0x1776 // 6006
+	IopQandQRSarNnarrow16Sto8Sx8  IROp = 0x1777 // 6007
+	IopQandQRSarNnarrow32Sto16Sx4 IROp = 0x1778 // 6008
+	IopQandQRSarNnarrow64Sto32Sx2 IROp = 0x1779 // 6009
+	IopQandQRSarNnarrow16Sto8Ux8  IROp = 0x177A // 6010
+	IopQandQRSarNnarrow32Sto16Ux4 IROp = 0x177B // 6011
+	IopQandQRSarNnarrow64Sto32Ux2 IROp = 0x177C // 6012
+	IopQNarrowBin16Sto8Ux16       IROp = 0x177D // 6013
+	IopQNarrowBin32Sto16Ux8       IROp = 0x177E // 6014
+	IopQNarrowBin16Sto8Sx16       IROp = 0x177F // 6015
+	IopQNarrowBin32Sto16Sx8       IROp = 0x1780 // 6016
+	IopQNarrowBin16Uto8Ux16       IROp = 0x1781 // 6017
+	IopQNarrowBin32Uto16Ux8       IROp = 0x1782 // 6018
+	IopNarrowBin16to8x16          IROp = 0x1783 // 6019
+	IopNarrowBin32to16x8          IROp = 0x1784 // 6020
+	IopQNarrowBin64Sto32Sx4       IROp = 0x1785 // 6021
+	IopQNarrowBin64Uto32Ux4       IROp = 0x1786 // 6022
+	IopNarrowBin64to32x4          IROp = 0x1787 // 6023
+	IopNarrowUn16to8x8            IROp = 0x1788 // 6024
+	IopNarrowUn32to16x4           IROp = 0x1789 // 6025
+	IopNarrowUn64to32x2           IROp = 0x178A // 6026
+	IopQNarrowUn16Sto8Sx8         IROp = 0x178B // 6027
+	IopQNarrowUn32Sto16Sx4        IROp = 0x178C // 6028
+	IopQNarrowUn64Sto32Sx2        IROp = 0x178D // 6029
+	IopQNarrowUn16Sto8Ux8         IROp = 0x178E // 6030
+	IopQNarrowUn32Sto16Ux4        IROp = 0x178F // 6031
+	IopQNarrowUn64Sto32Ux2        IROp = 0x1790 // 6032
+	IopQNarrowUn16Uto8Ux8         IROp = 0x1791 // 6033
+	IopQNarrowUn32Uto16Ux4        IROp = 0x1792 // 6034
+	IopQNarrowUn64Uto32Ux2        IROp = 0x1793 // 6035
+	IopWiden8Uto16x8              IROp = 0x1794 // 6036
+	IopWiden16Uto32x4             IROp = 0x1795 // 6037
+	IopWiden32Uto64x2             IROp = 0x1796 // 6038
+	IopWiden8Sto16x8              IROp = 0x1797 // 6039
+	IopWiden16Sto32x4             IROp = 0x1798 // 6040
+	IopWiden32Sto64x2             IROp = 0x1799 // 6041
+	IopInterleaveHI8x16           IROp = 0x179A // 6042
+	IopInterleaveHI16x8           IROp = 0x179B // 6043
+	IopInterleaveHI32x4           IROp = 0x179C // 6044
+	IopInterleaveHI64x2           IROp = 0x179D // 6045
+	IopInterleaveLO8x16           IROp = 0x179E // 6046
+	IopInterleaveLO16x8           IROp = 0x179F // 6047
+	IopInterleaveLO32x4           IROp = 0x17A0 // 6048
+	IopInterleaveLO64x2           IROp = 0x17A1 // 6049
+	IopInterleaveOddLanes8x16     IROp = 0x17A2 // 6050
+	IopInterleaveEvenLanes8x16    IROp = 0x17A3 // 6051
+	IopInterleaveOddLanes16x8     IROp = 0x17A4 // 6052
+	IopInterleaveEvenLanes16x8    IROp = 0x17A5 // 6053
+	IopInterleaveOddLanes32x4     IROp = 0x17A6 // 6054
+	IopInterleaveEvenLanes32x4    IROp = 0x17A7 // 6055
+	IopCatOddLanes8x16            IROp = 0x17A8 // 6056
+	IopCatOddLanes16x8            IROp = 0x17A9 // 6057
+	IopCatOddLanes32x4            IROp = 0x17AA // 6058
+	IopCatEvenLanes8x16           IROp = 0x17AB // 6059
+	IopCatEvenLanes16x8           IROp = 0x17AC // 6060
+	IopCatEvenLanes32x4           IROp = 0x17AD // 6061
+	IopGetElem8x16                IROp = 0x17AE // 6062
+	IopGetElem16x8                IROp = 0x17AF // 6063
+	IopGetElem32x4                IROp = 0x17B0 // 6064
+	IopGetElem64x2                IROp = 0x17B1 // 6065
+	IopSetElem8x16                IROp = 0x17B2 // 6066
+	IopSetElem16x8                IROp = 0x17B3 // 6067
+	IopSetElem32x4                IROp = 0x17B4 // 6068
+	IopSetElem64x2                IROp = 0x17B5 // 6069
+	IopDup8x16                    IROp = 0x17B6 // 6070
+	IopDup16x8                    IROp = 0x17B7 // 6071
+	IopDup32x4                    IROp = 0x17B8 // 6072
+	IopSliceV128                  IROp = 0x17B9 // (V128, V128, I8) -> V128
+	IopReverse8sIn16x8            IROp = 0x17BA // 6074
+	IopReverse8sIn32x4            IROp = 0x17BB // 6075
+	IopReverse16sIn32x4           IROp = 0x17BC // 6076
+	IopReverse8sIn64x2            IROp = 0x17BD // 6077
+	IopReverse16sIn64x2           IROp = 0x17BE // 6078
+	IopReverse32sIn64x2           IROp = 0x17BF // 6079
+	IopReverse1sIn8x16            IROp = 0x17C0 // 6080
+	IopPerm8x16                   IROp = 0x17C1 // 6081
+	IopPerm32x4                   IROp = 0x17C2 // 6082
+	IopPerm8x16x2                 IROp = 0x17C3 // 6083
+	IopGetMSBs8x16                IROp = 0x17C4 // 6084
+	IopRecipEst32Ux4              IROp = 0x17C5 // 6085
+	IopRSqrtEst32Ux4              IROp = 0x17C6 // 6086
+	IopMulI128by10                IROp = 0x17C7 // 6087
+	IopMulI128by10Carry           IROp = 0x17C8 // 6088
+	IopMulI128by10E               IROp = 0x17C9 // 6089
+	IopMulI128by10ECarry          IROp = 0x17CA // 6090
+	IopV256to640                  IROp = 0x17CB // V256 -> I64, extract least significant lane
+	IopV256to641                  IROp = 0x17CC // 6092
+	IopV256to642                  IROp = 0x17CD // 6093
+	IopV256to643                  IROp = 0x17CE // V256 -> I64, extract most significant lane
+	Iop64x4toV256                 IROp = 0x17CF // (I64,I64,I64,I64)->V256
+	IopV256toV1280                IROp = 0x17D0 // V256 -> V128, less significant lane
+	IopV256toV1281                IROp = 0x17D1 // V256 -> V128, more significant lane
+	IopV128HLtoV256               IROp = 0x17D2 // (V128,V128)->V256, first arg is most signif
+	IopAndV256                    IROp = 0x17D3 // 6099
+	IopOrV256                     IROp = 0x17D4 // 6100
+	IopXorV256                    IROp = 0x17D5 // 6101
+	IopNotV256                    IROp = 0x17D6 // 6102
+	IopCmpNEZ8x32                 IROp = 0x17D7 // 6103
+	IopCmpNEZ16x16                IROp = 0x17D8 // 6104
+	IopCmpNEZ32x8                 IROp = 0x17D9 // 6105
+	IopCmpNEZ64x4                 IROp = 0x17DA // 6106
+	IopAdd8x32                    IROp = 0x17DB // 6107
+	IopAdd16x16                   IROp = 0x17DC // 6108
+	IopAdd32x8                    IROp = 0x17DD // 6109
+	IopAdd64x4                    IROp = 0x17DE // 6110
+	IopSub8x32                    IROp = 0x17DF // 6111
+	IopSub16x16                   IROp = 0x17E0 // 6112
+	IopSub32x8                    IROp = 0x17E1 // 6113
+	IopSub64x4                    IROp = 0x17E2 // 6114
+	IopCmpEQ8x32                  IROp = 0x17E3 // 6115
+	IopCmpEQ16x16                 IROp = 0x17E4 // 6116
+	IopCmpEQ32x8                  IROp = 0x17E5 // 6117
+	IopCmpEQ64x4                  IROp = 0x17E6 // 6118
+	IopCmpGT8Sx32                 IROp = 0x17E7 // 6119
+	IopCmpGT16Sx16                IROp = 0x17E8 // 6120
+	IopCmpGT32Sx8                 IROp = 0x17E9 // 6121
+	IopCmpGT64Sx4                 IROp = 0x17EA // 6122
+	IopShlN16x16                  IROp = 0x17EB // 6123
+	IopShlN32x8                   IROp = 0x17EC // 6124
+	IopShlN64x4                   IROp = 0x17ED // 6125
+	IopShrN16x16                  IROp = 0x17EE // 6126
+	IopShrN32x8                   IROp = 0x17EF // 6127
+	IopShrN64x4                   IROp = 0x17F0 // 6128
+	IopSarN16x16                  IROp = 0x17F1 // 6129
+	IopSarN32x8                   IROp = 0x17F2 // 6130
+	IopMax8Sx32                   IROp = 0x17F3 // 6131
+	IopMax16Sx16                  IROp = 0x17F4 // 6132
+	IopMax32Sx8                   IROp = 0x17F5 // 6133
+	IopMax8Ux32                   IROp = 0x17F6 // 6134
+	IopMax16Ux16                  IROp = 0x17F7 // 6135
+	IopMax32Ux8                   IROp = 0x17F8 // 6136
+	IopMin8Sx32                   IROp = 0x17F9 // 6137
+	IopMin16Sx16                  IROp = 0x17FA // 6138
+	IopMin32Sx8                   IROp = 0x17FB // 6139
+	IopMin8Ux32                   IROp = 0x17FC // 6140
+	IopMin16Ux16                  IROp = 0x17FD // 6141
+	IopMin32Ux8                   IROp = 0x17FE // 6142
+	IopMul16x16                   IROp = 0x17FF // 6143
+	IopMul32x8                    IROp = 0x1800 // 6144
+	IopMulHi16Ux16                IROp = 0x1801 // 6145
+	IopMulHi16Sx16                IROp = 0x1802 // 6146
+	IopQAdd8Ux32                  IROp = 0x1803 // 6147
+	IopQAdd16Ux16                 IROp = 0x1804 // 6148
+	IopQAdd8Sx32                  IROp = 0x1805 // 6149
+	IopQAdd16Sx16                 IROp = 0x1806 // 6150
+	IopQSub8Ux32                  IROp = 0x1807 // 6151
+	IopQSub16Ux16                 IROp = 0x1808 // 6152
+	IopQSub8Sx32                  IROp = 0x1809 // 6153
+	IopQSub16Sx16                 IROp = 0x180A // 6154
+	IopAvg8Ux32                   IROp = 0x180B // 6155
+	IopAvg16Ux16                  IROp = 0x180C // 6156
+	IopPerm32x8                   IROp = 0x180D // 6157
+	IopCipherV128                 IROp = 0x180E // 6158
+	IopCipherLV128                IROp = 0x180F // 6159
+	IopCipherSV128                IROp = 0x1810 // 6160
+	IopNCipherV128                IROp = 0x1811 // 6161
+	IopNCipherLV128               IROp = 0x1812 // 6162
+	IopSHA512                     IROp = 0x1813 // 6163
+	IopSHA256                     IROp = 0x1814 // 6164
+	IopAdd64Fx4                   IROp = 0x1815 // 6165
+	IopSub64Fx4                   IROp = 0x1816 // 6166
+	IopMul64Fx4                   IROp = 0x1817 // 6167
+	IopDiv64Fx4                   IROp = 0x1818 // 6168
+	IopAdd32Fx8                   IROp = 0x1819 // 6169
+	IopSub32Fx8                   IROp = 0x181A // 6170
+	IopMul32Fx8                   IROp = 0x181B // 6171
+	IopDiv32Fx8                   IROp = 0x181C // 6172
+	IopSqrt32Fx8                  IROp = 0x181D // 6173
+	IopSqrt64Fx4                  IROp = 0x181E // 6174
+	IopRSqrtEst32Fx8              IROp = 0x181F // 6175
+	IopRecipEst32Fx8              IROp = 0x1820 // 6176
+	IopMax32Fx8                   IROp = 0x1821 // 6177
+	IopMin32Fx8                   IROp = 0x1822 // 6178
+	IopMax64Fx4                   IROp = 0x1823 // 6179
+	IopMin64Fx4                   IROp = 0x1824 // 6180
+	IopLAST                       IROp = 0x1825 // 6181
 )
 
 // ARM64RegisterOffsets 包含ARM64寄存器名称到偏移值的映射
