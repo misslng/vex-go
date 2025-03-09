@@ -187,6 +187,190 @@ const (
 	IopNot16 IROp = 0x1400 + 46
 	IopNot32 IROp = 0x1400 + 47
 	IopNot64 IROp = 0x1400 + 48
+
+	// CAS比较操作
+	IopCasCmpEQ8  IROp = 0x1400 + 49
+	IopCasCmpEQ16 IROp = 0x1400 + 50
+	IopCasCmpEQ32 IROp = 0x1400 + 51
+	IopCasCmpEQ64 IROp = 0x1400 + 52
+	IopCasCmpNE8  IROp = 0x1400 + 53
+	IopCasCmpNE16 IROp = 0x1400 + 54
+	IopCasCmpNE32 IROp = 0x1400 + 55
+	IopCasCmpNE64 IROp = 0x1400 + 56
+
+	// 需要昂贵的确定性跟踪的比较操作
+	IopExpCmpNE8  IROp = 0x1400 + 57
+	IopExpCmpNE16 IROp = 0x1400 + 58
+	IopExpCmpNE32 IROp = 0x1400 + 59
+	IopExpCmpNE64 IROp = 0x1400 + 60
+
+	// 扩展乘法（有符号和无符号）
+	IopMullS8  IROp = 0x1400 + 61
+	IopMullS16 IROp = 0x1400 + 62
+	IopMullS32 IROp = 0x1400 + 63
+	IopMullS64 IROp = 0x1400 + 64
+	IopMullU8  IROp = 0x1400 + 65
+	IopMullU16 IROp = 0x1400 + 66
+	IopMullU32 IROp = 0x1400 + 67
+	IopMullU64 IROp = 0x1400 + 68
+
+	// 整数特殊操作
+	IopClz64 IROp = 0x1400 + 69 // 计算前导零数
+	IopClz32 IROp = 0x1400 + 70
+	IopCtz64 IROp = 0x1400 + 71 // 计算尾随零数
+	IopCtz32 IROp = 0x1400 + 72
+
+	// 标准整数比较（有符号和无符号）
+	IopCmpLT32S IROp = 0x1400 + 73
+	IopCmpLT64S IROp = 0x1400 + 74
+	IopCmpLE32S IROp = 0x1400 + 75
+	IopCmpLE64S IROp = 0x1400 + 76
+	IopCmpLT32U IROp = 0x1400 + 77
+	IopCmpLT64U IROp = 0x1400 + 78
+	IopCmpLE32U IROp = 0x1400 + 79
+	IopCmpLE64U IROp = 0x1400 + 80
+
+	// Valgrind-Memcheck相关操作
+	IopCmpNEZ8   IROp = 0x1400 + 81
+	IopCmpNEZ16  IROp = 0x1400 + 82
+	IopCmpNEZ32  IROp = 0x1400 + 83
+	IopCmpNEZ64  IROp = 0x1400 + 84
+	IopCmpwNEZ32 IROp = 0x1400 + 85 // 全0 -> 全0; 其他 -> 全1
+	IopCmpwNEZ64 IROp = 0x1400 + 86
+	IopLeft8     IROp = 0x1400 + 87 // \x -> x | -x
+	IopLeft16    IROp = 0x1400 + 88
+	IopLeft32    IROp = 0x1400 + 89
+	IopLeft64    IROp = 0x1400 + 90
+	IopMax32U    IROp = 0x1400 + 91 // 无符号最大值
+
+	// PowerPC风格三路整数比较
+	// op(x,y) | x < y = 0x8, x > y = 0x4, x == y = 0x2
+	IopCmpORD32U IROp = 0x1400 + 92
+	IopCmpORD64U IROp = 0x1400 + 93
+	IopCmpORD32S IROp = 0x1400 + 94
+	IopCmpORD64S IROp = 0x1400 + 95
+
+	// 除法操作
+	IopDivU32  IROp = 0x1400 + 96  // I32,I32 -> I32 (简单除法，无模)
+	IopDivS32  IROp = 0x1400 + 97  // 同上，有符号
+	IopDivU64  IROp = 0x1400 + 98  // I64,I64 -> I64
+	IopDivS64  IROp = 0x1400 + 99  // 同上，有符号
+	IopDivU64E IROp = 0x1400 + 100 // 被除数是64位参数(高)与64个0(低)连接
+	IopDivS64E IROp = 0x1400 + 101 // 同上，有符号
+	IopDivU32E IROp = 0x1400 + 102 // 被除数是32位参数(高)与32个0(低)连接
+	IopDivS32E IROp = 0x1400 + 103 // 同上，有符号
+
+	// DivMod操作 - 同时返回除法和取模结果
+	IopDivModU64to32  IROp = 0x1400 + 104 // I64,I32 -> I64，其中低半是商，高半是余数
+	IopDivModS64to32  IROp = 0x1400 + 105 // 同上，有符号
+	IopDivModU128to64 IROp = 0x1400 + 106 // V128,I64 -> V128，其中低半是商，高半是余数
+	IopDivModS128to64 IROp = 0x1400 + 107 // 同上，有符号
+	IopDivModS64to64  IROp = 0x1400 + 108 // I64,I64 -> I128，其中低半是商，高半是余数
+
+	// 整数扩展转换（无符号）
+	Iop8Uto16  IROp = 0x1400 + 109
+	Iop8Uto32  IROp = 0x1400 + 110
+	Iop8Uto64  IROp = 0x1400 + 111
+	Iop16Uto32 IROp = 0x1400 + 112
+	Iop16Uto64 IROp = 0x1400 + 113
+	Iop32Uto64 IROp = 0x1400 + 114
+
+	// 整数扩展转换（有符号）
+	Iop8Sto16  IROp = 0x1400 + 115
+	Iop8Sto32  IROp = 0x1400 + 116
+	Iop8Sto64  IROp = 0x1400 + 117
+	Iop16Sto32 IROp = 0x1400 + 118
+	Iop16Sto64 IROp = 0x1400 + 119
+	Iop32Sto64 IROp = 0x1400 + 120
+
+	// 整数缩小转换
+	Iop64to8  IROp = 0x1400 + 121
+	Iop32to8  IROp = 0x1400 + 122
+	Iop64to16 IROp = 0x1400 + 123
+
+	// 8 <-> 16 位转换
+	Iop16to8   IROp = 0x1400 + 124 // I16 -> I8, 低半部分
+	Iop16HIto8 IROp = 0x1400 + 125 // I16 -> I8, 高半部分
+	Iop8HLto16 IROp = 0x1400 + 126 // (I8,I8) -> I16
+
+	// 16 <-> 32 位转换
+	Iop32to16   IROp = 0x1400 + 127 // I32 -> I16, 低半部分
+	Iop32HIto16 IROp = 0x1400 + 128 // I32 -> I16, 高半部分
+	Iop16HLto32 IROp = 0x1400 + 129 // (I16,I16) -> I32
+
+	// 32 <-> 64 位转换
+	Iop64to32   IROp = 0x1400 + 130 // I64 -> I32, 低半部分
+	Iop64HIto32 IROp = 0x1400 + 131 // I64 -> I32, 高半部分
+	Iop32HLto64 IROp = 0x1400 + 132 // (I32,I32) -> I64
+
+	// 64 <-> 128 位转换
+	Iop128to64   IROp = 0x1400 + 133 // I128 -> I64, 低半部分
+	Iop128HIto64 IROp = 0x1400 + 134 // I128 -> I64, 高半部分
+	Iop64HLto128 IROp = 0x1400 + 135 // (I64,I64) -> I128
+
+	// 1位操作
+	IopNot1   IROp = 0x1400 + 136 // Ity_Bit -> Ity_Bit
+	Iop32to1  IROp = 0x1400 + 137 // Ity_I32 -> Ity_Bit, 仅选择bit[0]
+	Iop64to1  IROp = 0x1400 + 138 // Ity_I64 -> Ity_Bit, 仅选择bit[0]
+	Iop1Uto8  IROp = 0x1400 + 139 // Ity_Bit -> Ity_I8, 无符号扩展
+	Iop1Uto32 IROp = 0x1400 + 140 // Ity_Bit -> Ity_I32, 无符号扩展
+	Iop1Uto64 IROp = 0x1400 + 141 // Ity_Bit -> Ity_I64, 无符号扩展
+	Iop1Sto8  IROp = 0x1400 + 142 // Ity_Bit -> Ity_I8, 有符号扩展
+	Iop1Sto16 IROp = 0x1400 + 143 // Ity_Bit -> Ity_I16, 有符号扩展
+	Iop1Sto32 IROp = 0x1400 + 144 // Ity_Bit -> Ity_I32, 有符号扩展
+	Iop1Sto64 IROp = 0x1400 + 145 // Ity_Bit -> Ity_I64, 有符号扩展
+
+	// 浮点操作 - 尝试符合IEEE754标准
+	// 二进制操作，带舍入
+	// IRRoundingMode(I32) x F64 x F64 -> F64
+	IopAddF64 IROp = 0x1400 + 146
+	IopSubF64 IROp = 0x1400 + 147
+	IopMulF64 IROp = 0x1400 + 148
+	IopDivF64 IROp = 0x1400 + 149
+
+	// IRRoundingMode(I32) x F32 x F32 -> F32
+	IopAddF32 IROp = 0x1400 + 150
+	IopSubF32 IROp = 0x1400 + 151
+	IopMulF32 IROp = 0x1400 + 152
+	IopDivF32 IROp = 0x1400 + 153
+
+	// 结果先舍入到IEEE浮点范围的变体
+	IopAddF64r32 IROp = 0x1400 + 154
+	IopSubF64r32 IROp = 0x1400 + 155
+	IopMulF64r32 IROp = 0x1400 + 156
+	IopDivF64r32 IROp = 0x1400 + 157
+
+	// 一元操作，不带舍入
+	IopNegF64 IROp = 0x1400 + 158 // F64 -> F64
+	IopAbsF64 IROp = 0x1400 + 159 // F64 -> F64
+
+	IopNegF32 IROp = 0x1400 + 160 // F32 -> F32
+	IopAbsF32 IROp = 0x1400 + 161 // F32 -> F32
+
+	// 浮点操作 - 开方、比较
+	IopSqrtF64 IROp = 0x1400 + 162 // IRRoundingMode(I32) x F64 -> F64
+	IopSqrtF32 IROp = 0x1400 + 163 // IRRoundingMode(I32) x F32 -> F32
+	IopCmpF64  IROp = 0x1400 + 164 // F64 x F64 -> IRCmpF64Result(I32)
+	IopCmpF32  IROp = 0x1400 + 165 // F32 x F32 -> IRCmpF32Result(I32)
+	IopCmpF128 IROp = 0x1400 + 166 // F128 x F128 -> IRCmpF128Result(I32)
+
+	// 浮点数与整数转换
+	IopF64toI16S IROp = 0x1400 + 167 // IRRoundingMode(I32) x F64 -> signed I16
+	IopF64toI32S IROp = 0x1400 + 168 // IRRoundingMode(I32) x F64 -> signed I32
+	IopF64toI64S IROp = 0x1400 + 169 // IRRoundingMode(I32) x F64 -> signed I64
+	IopF64toI64U IROp = 0x1400 + 170 // IRRoundingMode(I32) x F64 -> unsigned I64
+	IopF64toI32U IROp = 0x1400 + 171 // IRRoundingMode(I32) x F64 -> unsigned I32
+
+	IopI32StoF64 IROp = 0x1400 + 172 // signed I32 -> F64
+	IopI64StoF64 IROp = 0x1400 + 173 // IRRoundingMode(I32) x signed I64 -> F64
+	IopI64UtoF64 IROp = 0x1400 + 174 // IRRoundingMode(I32) x unsigned I64 -> F64
+	IopI64UtoF32 IROp = 0x1400 + 175 // IRRoundingMode(I32) x unsigned I64 -> F32
+	IopI32UtoF32 IROp = 0x1400 + 176 // IRRoundingMode(I32) x unsigned I32 -> F32
+	IopI32UtoF64 IROp = 0x1400 + 177 // unsigned I32 -> F64
+
+	IopF32toI32S IROp = 0x1400 + 178 // IRRoundingMode(I32) x F32 -> signed I32
+	IopF32toI64S IROp = 0x1400 + 179 // IRRoundingMode(I32) x F32 -> signed I64
+	IopF32toI32U IROp = 0x1400 + 180 // IRRoundingMode(I32) x F32 -> unsigned I32
 )
 
 // ARM64RegisterOffsets 包含ARM64寄存器名称到偏移值的映射
