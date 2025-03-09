@@ -693,6 +693,37 @@ const (
 	IopCmpGT8Sx8  IROp = 0x1400 + 386 // 有符号大于比较8x8
 	IopCmpGT16Sx4 IROp = 0x1400 + 387 // 有符号大于比较16x4
 	IopCmpGT32Sx2 IROp = 0x1400 + 388 // 有符号大于比较32x2
+
+	// 计数：比特位1的数量/前导零/前导符号位（不包括最高位）
+	IopCnt8x8  IROp = 0x1400 + 389 // 计数比特位中1的数量8x8
+	IopClz8x8  IROp = 0x1400 + 390 // 计数前导零8x8
+	IopClz16x4 IROp = 0x1400 + 391 // 计数前导零16x4
+	IopClz32x2 IROp = 0x1400 + 392 // 计数前导零32x2
+	IopCls8x8  IROp = 0x1400 + 393 // 计数前导符号位8x8
+	IopCls16x4 IROp = 0x1400 + 394 // 计数前导符号位16x4
+	IopCls32x2 IROp = 0x1400 + 395 // 计数前导符号位32x2
+	IopClz64x2 IROp = 0x1400 + 396 // 计数前导零64x2
+
+	// 向量计数尾随零
+	IopCtz8x16 IROp = 0x1400 + 397 // 计数尾随零8x16
+	IopCtz16x8 IROp = 0x1400 + 398 // 计数尾随零16x8
+	IopCtz32x4 IROp = 0x1400 + 399 // 计数尾随零32x4
+	IopCtz64x2 IROp = 0x1400 + 400 // 计数尾随零64x2
+
+	// 向量x向量 移位/旋转
+	IopShl8x8  IROp = 0x1400 + 401 // 左移8x8
+	IopShl16x4 IROp = 0x1400 + 402 // 左移16x4
+	IopShl32x2 IROp = 0x1400 + 403 // 左移32x2
+	IopShr8x8  IROp = 0x1400 + 404 // 逻辑右移8x8
+	IopShr16x4 IROp = 0x1400 + 405 // 逻辑右移16x4
+	IopShr32x2 IROp = 0x1400 + 406 // 逻辑右移32x2
+	IopSar8x8  IROp = 0x1400 + 407 // 算术右移8x8
+	IopSar16x4 IROp = 0x1400 + 408 // 算术右移16x4
+	IopSar32x2 IROp = 0x1400 + 409 // 算术右移32x2
+	IopSal8x8  IROp = 0x1400 + 410 // 算术左移8x8
+	IopSal16x4 IROp = 0x1400 + 411 // 算术左移16x4
+	IopSal32x2 IROp = 0x1400 + 412 // 算术左移32x2
+	IopSal64x1 IROp = 0x1400 + 413 // 算术左移64x1
 )
 
 // ARM64RegisterOffsets 包含ARM64寄存器名称到偏移值的映射
