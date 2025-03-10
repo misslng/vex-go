@@ -1441,9 +1441,16 @@ type Qop struct {
 	Details *C.IRQop
 }
 
+type IRTriop struct {
+	Op   IROp
+	Arg1 *IRExpr
+	Arg2 *IRExpr
+	Arg3 *IRExpr
+}
+
 // Triop 表示三元操作
 type Triop struct {
-	Details *C.IRTriop
+	Details *IRTriop
 }
 
 // Binop 表示二元操作
