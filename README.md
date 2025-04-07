@@ -1,3 +1,5 @@
 # vex-go
 
-Go bindings for VEX (Vulnerability and Exploit Exchange)
+vex-ir 的go语言实现，半成品，只会跟随我的使用来更新
+
+如果有遇到问题欢迎提pr，感谢
